@@ -1,0 +1,1382 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lámpara para mis pasos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#F1F2F5; --surface:#FFFFFF; --sunk:#E8EAF0; --ink:#1C2130; --muted:#5B6275; --line:#D9DCE5;
+  --rubric:#A3242D; --rubric-soft:#F6E4E5; --lapis:#26457D; --lapis-soft:#E3E9F4; --gold:#9C7420; --gold-soft:#F3EAD4;
+  --ok:#2F7A4D; --on-accent:#FFFFFF;
+  --serif:"EB Garamond", Garamond, "Times New Roman", serif;
+  --sans:"Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0E121A; --surface:#161B26; --sunk:#222938; --ink:#E5E7EE; --muted:#9BA2B4; --line:#2A3142;
+    --rubric:#E46A70; --rubric-soft:#3A1E23; --lapis:#98B4E9; --lapis-soft:#1D2A42; --gold:#D8B05A; --gold-soft:#342A15; --ok:#5DB27E; --on-accent:#0E121A;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0E121A; --surface:#161B26; --sunk:#222938; --ink:#E5E7EE; --muted:#9BA2B4; --line:#2A3142;
+  --rubric:#E46A70; --rubric-soft:#3A1E23; --lapis:#98B4E9; --lapis-soft:#1D2A42; --gold:#D8B05A; --gold-soft:#342A15; --ok:#5DB27E; --on-accent:#0E121A;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;margin:0}
+.wrap{max-width:1140px;margin:0 auto;padding-inline:20px;padding-block:20px 56px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--lapis);outline-offset:2px}
+.label{font-family:var(--sans);font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--rubric)}
+
+/* Header */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.brand h1{font-family:var(--serif);font-weight:500;font-size:clamp(1.7rem,4vw,2.3rem);line-height:1.05;margin:4px 0 0;text-wrap:balance}
+.brand h1 span{color:var(--rubric)}
+.brand .sub{color:var(--muted);font-size:.92rem;margin-top:4px}
+.daynav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.navbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-size:.92rem}
+.navbtn:hover:not([disabled]){border-color:var(--lapis);color:var(--lapis)}
+.navbtn[disabled]{opacity:.4;cursor:default}
+.datebox{text-align:right;min-width:0}
+@media (max-width:640px){.datebox{text-align:left}.daynav{justify-content:flex-start}}
+.datebox .d{font-family:var(--serif);font-size:1.15rem;margin-top:8px}
+.season{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+.season i{width:10px;height:10px;border-radius:50%;display:inline-block;border:1px solid var(--line)}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-top:20px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{background:none;border:none;border-bottom:2px solid transparent;padding:10px 16px;font-family:var(--serif);font-size:1.15rem;color:var(--muted);white-space:nowrap;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--rubric)}
+.tab .chk{font-family:var(--sans);font-size:.72rem;font-weight:700;color:var(--ok);margin-left:6px;letter-spacing:.06em}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:28px;margin-top:22px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+
+.invoc{font-family:var(--serif);font-style:italic;color:var(--muted);font-size:1.05rem;margin:0 0 18px;max-width:62ch}
+.invoc b{color:var(--rubric);font-style:normal;font-weight:600}
+
+/* Missal page */
+.page{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:clamp(20px,4vw,40px)}
+.verse-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.fiesta{font-family:var(--serif);font-style:italic;color:var(--rubric);font-size:1.05rem;margin-top:2px}
+.ref{font-family:var(--serif);font-size:1.3rem;color:var(--rubric);font-weight:600}
+.book{color:var(--muted);font-size:.9rem}
+.verse{font-family:var(--serif);font-size:clamp(1.45rem,3.2vw,1.95rem);line-height:1.35;margin:14px 0 6px;max-width:36ch;text-wrap:pretty}
+.verse::first-letter{float:left;font-size:3.3em;line-height:.82;padding:6px 10px 0 0;color:var(--rubric);font-weight:500}
+.note{font-size:.8rem;color:var(--muted);margin-top:18px}
+
+.sec{border-top:1px solid var(--line);padding-top:20px;margin-top:22px}
+.sec-h{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+.sec p{margin:0;max-width:66ch}
+.readbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:transparent;border-radius:999px;padding:3px 12px 3px 8px;font-size:.82rem;color:var(--muted);white-space:nowrap}
+.readbtn .box{width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center}
+.readbtn[aria-pressed="true"]{color:var(--ok);border-color:var(--ok)}
+.readbtn[aria-pressed="true"] .box{background:var(--ok);border-color:var(--ok)}
+.readbtn[aria-pressed="true"] .box::after{content:"";width:6px;height:3px;border-left:2px solid var(--surface);border-bottom:2px solid var(--surface);transform:rotate(-45deg) translate(1px,-1px)}
+.readbtn[disabled]{opacity:.5;cursor:default}
+
+.frase{margin-top:22px;background:var(--gold-soft);border-radius:6px;padding:18px 20px;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}
+.frase q{font-family:var(--serif);font-size:1.35rem;font-style:italic;quotes:"«" "»"}
+.copy{border:1px solid var(--gold);color:var(--gold);background:transparent;border-radius:999px;padding:4px 12px;font-size:.84rem}
+
+.qs{list-style:none;padding:0;margin:4px 0 0;display:grid;gap:10px}
+.qs li{font-family:var(--serif);font-size:1.15rem;padding-left:18px;position:relative;max-width:62ch}
+.qs li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;background:var(--rubric);transform:rotate(45deg)}
+
+.journal textarea{width:100%;min-height:130px;resize:vertical;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:12px 14px;font:inherit;font-family:var(--serif);font-size:1.1rem;line-height:1.5}
+.saved{font-size:.8rem;color:var(--muted);min-height:1.2em;margin-top:6px}
+
+.amen-zone{margin-top:30px;text-align:center;display:grid;justify-items:center;gap:10px}
+.amen{font-family:var(--serif);font-size:1.6rem;letter-spacing:.06em;background:var(--rubric);color:var(--on-accent);border:none;border-radius:999px;padding:12px 44px;transition:transform .15s ease, background .2s}
+.amen:hover:not([disabled]){transform:translateY(-1px)}
+.amen[aria-pressed="true"]{background:var(--ok)}
+.amen[disabled]{opacity:.45;cursor:default}
+.amen-hint{font-size:.88rem;color:var(--muted);max-width:46ch}
+.glow{animation:glow 1.2s ease}
+@keyframes glow{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--gold) 60%,transparent)}100%{box-shadow:0 0 0 26px transparent}}
+
+/* Rosary */
+.ros-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.ros-title{font-family:var(--serif);font-size:1.7rem;line-height:1.15;margin:4px 0 2px}
+.sets{display:flex;gap:6px;flex-wrap:wrap}
+.setbtn{border:1px solid var(--line);background:transparent;border-radius:999px;padding:3px 12px;font-size:.84rem;color:var(--muted)}
+.setbtn[aria-pressed="true"]{border-color:var(--lapis);color:var(--lapis);background:var(--lapis-soft)}
+.ros-prog{margin:18px 0 6px;display:flex;justify-content:space-between;font-size:.84rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.beads{display:grid;gap:8px;margin-top:14px;padding:14px;border-radius:6px;background:var(--bg);overflow-x:auto}
+.brow{display:flex;align-items:center;gap:5px;min-width:max-content}
+.brow .rl{font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--muted);width:92px;flex:none;text-transform:uppercase;white-space:nowrap}
+.bead{border:1.5px solid var(--muted);background:transparent;border-radius:50%;width:14px;height:14px;padding:0;flex:none}
+.bead.pn{width:20px;height:20px}
+.bead.gl,.bead.fa{border-radius:3px;transform:rotate(45deg);width:11px;height:11px;margin:0 3px}
+.bead.fa{width:8px;height:8px}
+.bead.cr{border:none;width:auto;height:auto;border-radius:0;color:var(--muted);font-size:1rem;line-height:1;padding:0 2px}
+.bead.mi{border-radius:999px;width:auto;height:auto;padding:1px 7px;font-size:.7rem;font-weight:700;color:var(--muted)}
+.bead.sv{width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
+.bead.done{background:var(--lapis);border-color:var(--lapis)}
+.bead.cr.done{background:none;color:var(--lapis)}
+.bead.mi.done{background:var(--lapis-soft);border-color:var(--lapis);color:var(--lapis)}
+.bead.now{background:var(--rubric);border-color:var(--rubric);box-shadow:0 0 0 3px var(--rubric-soft)}
+.bead.cr.now{background:none;color:var(--rubric);box-shadow:none}
+.bead.mi.now{color:var(--on-accent)}
+.pray{margin-top:20px}
+.pray h3{font-family:var(--serif);font-weight:500;font-size:1.45rem;margin:4px 0 8px;line-height:1.2;text-wrap:balance}
+.pray .ptext{font-family:var(--serif);font-size:1.22rem;line-height:1.55;max-width:60ch;margin:0}
+.mist{margin-top:14px;display:grid;gap:10px;background:var(--lapis-soft);border-radius:6px;padding:16px 18px}
+.mist .mref{color:var(--rubric);font-weight:700;font-size:.9rem}
+.mist p{margin:0;font-family:var(--serif);font-size:1.12rem}
+.mist .fruto{font-size:.9rem;color:var(--muted)}
+.mist .fruto b{color:var(--ink)}
+.ros-ctrl{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px;flex-wrap:wrap}
+.next{font-family:var(--serif);font-size:1.3rem;background:var(--lapis);color:var(--on-accent);border:none;border-radius:999px;padding:10px 32px}
+.next.fin{background:var(--rubric)}
+.next.ok{background:var(--ok)}
+.small{font-size:.84rem;color:var(--muted)}
+.linkbtn{background:none;border:none;color:var(--muted);text-decoration:underline;font-size:.84rem;padding:0}
+
+/* Aside */
+aside{display:grid;gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px}
+.card h2{font-family:var(--serif);font-weight:500;font-size:1.2rem;margin:2px 0 12px}
+.today-prog{display:flex;align-items:center;gap:16px}
+.ring{width:84px;height:84px;flex:none}
+.ring circle{fill:none;stroke-width:8}
+.ring .bgc{stroke:var(--sunk)}
+.ring .fg{stroke:var(--lapis);stroke-linecap:round;transition:stroke-dashoffset .4s ease}
+.ring text{fill:var(--ink);font-family:var(--serif);font-size:22px}
+.ring.done .fg{stroke:var(--ok)}
+.stat-l{font-size:.84rem;color:var(--muted)}
+.stat-v{font-family:var(--serif);font-size:1.45rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.bar{height:8px;background:var(--sunk);border-radius:999px;overflow:hidden;margin:6px 0 4px}
+.bar>div{height:100%;background:var(--gold);border-radius:999px;transition:width .4s ease}
+.bar.blue>div{background:var(--lapis)}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:4px}
+.dayc{aspect-ratio:1;border-radius:6px;background:var(--sunk);display:grid;place-items:center;font-size:.78rem;color:var(--muted);border:1px solid transparent;font-variant-numeric:tabular-nums;max-width:100%;position:relative}
+.dayc.amen{background:var(--ok);color:var(--on-accent)}
+.dayc.part{background:var(--lapis-soft);color:var(--lapis)}
+.dayc.today{border-color:var(--rubric)}
+.dayc .rs{position:absolute;bottom:3px;width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.76rem;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+
+.month{margin-top:12px}
+.month:first-of-type{margin-top:0}
+.month .mn{font-family:var(--serif);font-size:1.02rem;margin-bottom:6px;display:flex;justify-content:space-between}
+.month .mn span{font-family:var(--sans);font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .wd{font-size:.66rem;text-align:center;color:var(--muted);font-weight:700}
+.cstep{border:1px solid var(--line);background:transparent;border-radius:5px;padding:4px 0;font-size:.78rem;font-variant-numeric:tabular-nums;color:var(--muted);position:relative}
+.cstep.fest::after{content:"";position:absolute;top:2px;right:2px;width:4px;height:4px;border-radius:50%;background:var(--rubric)}
+.cstep.done{background:var(--ok);border-color:var(--ok);color:var(--on-accent)}
+.cstep.cur{border-color:var(--rubric);color:var(--rubric);font-weight:700;box-shadow:0 0 0 1px var(--rubric)}
+.cstep.done.cur{color:var(--on-accent)}
+.cstep.future{opacity:.55}
+
+.jlist{list-style:none;margin:0;padding:0;display:grid;gap:10px;max-height:320px;overflow:auto}
+.jlist button{width:100%;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.jlist .jd{font-size:.78rem;color:var(--rubric);font-weight:700;letter-spacing:.04em}
+.jlist .jt{font-family:var(--serif);font-size:1rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.empty{font-size:.9rem;color:var(--muted);margin:0}
+.store-note{font-size:.78rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.glow{animation:none}.amen,.ring .fg,.bar>div{transition:none}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="label">Oración diaria · Palabra de Dios</div>
+      <h1>Lámpara para <span>mis pasos</span></h1>
+      <div class="sub">«Tu palabra es una lámpara para mis pasos» — Sal 119 (118), 105</div>
+    </div>
+    <div class="datebox">
+      <div class="daynav">
+        <button class="navbtn" id="prev" aria-label="Día anterior">‹ Anterior</button>
+        <button class="navbtn" id="hoy">Hoy</button>
+        <button class="navbtn" id="next" aria-label="Día siguiente">Siguiente ›</button>
+      </div>
+      <div class="d" id="fecha"></div>
+      <div class="season" id="season"></div>
+    </div>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-palabra" aria-selected="true" aria-controls="panel-palabra">Palabra del día<span class="chk" id="chkPalabra"></span></button>
+    <button class="tab" role="tab" id="tab-rosario" aria-selected="false" aria-controls="panel-rosario">Santo Rosario<span class="chk" id="chkRosario"></span></button>
+  </div>
+
+  <div class="grid">
+    <main>
+      <div id="panel-palabra" role="tabpanel" aria-labelledby="tab-palabra">
+        <p class="invoc"><b>✠</b> Ven, Espíritu Santo, llena los corazones de tus fieles y enciende en ellos el fuego de tu amor.</p>
+        <article class="page">
+          <section>
+            <div class="verse-head">
+              <div>
+                <div class="label" id="diaN"></div>
+                <div class="fiesta" id="fiesta" hidden></div>
+                <div class="ref" id="ref"></div>
+              </div>
+              <button class="readbtn" data-read="palabra" aria-pressed="false"><span class="box"></span>Leído</button>
+            </div>
+            <div class="book" id="book"></div>
+            <p class="verse" id="verse"></p>
+          </section>
+
+          <section class="sec">
+            <div class="sec-h"><div class="label">Contexto</div><button class="readbtn" data-read="contexto" aria-pressed="false"><span class="box"></span>Leído</button></div>
+            <p id="contexto"></p>
+          </section>
+
+          <section class="sec">
+            <div class="sec-h"><div class="label">Lo que Dios y Jesús nos enseñan</div><button class="readbtn" data-read="ensenanza" aria-pressed="false"><span class="box"></span>Leído</button></div>
+            <p id="ensenanza"></p>
+          </section>
+
+          <section class="sec">
+            <div class="sec-h"><div class="label">Reflexión</div><button class="readbtn" data-read="reflexion" aria-pressed="false"><span class="box"></span>Leído</button></div>
+            <p id="reflexion"></p>
+            <div class="frase">
+              <div><div class="label" style="color:var(--gold)">Frase para hoy</div><q id="frase"></q></div>
+              <button class="copy" id="copyFrase">Copiar frase</button>
+            </div>
+          </section>
+
+          <section class="sec">
+            <div class="sec-h"><div class="label">Preguntas para meditar</div><button class="readbtn" data-read="preguntas" aria-pressed="false"><span class="box"></span>Leído</button></div>
+            <ul class="qs" id="preguntas"></ul>
+          </section>
+
+          <section class="sec journal">
+            <div class="sec-h"><label class="label" for="nota">Mi oración de hoy</label></div>
+            <textarea id="nota" placeholder="Escribí lo que te dejó la lectura, una respuesta a las preguntas o tu oración a Dios…"></textarea>
+            <div class="saved" id="saved"></div>
+          </section>
+
+          <div class="amen-zone">
+            <button class="amen" id="amen" aria-pressed="false">Amén</button>
+            <div class="amen-hint" id="amenHint"></div>
+          </div>
+          <p class="note">Texto bíblico en versión adaptada. Te recomiendo leer el pasaje completo en tu Biblia, por ejemplo en <em>El Libro del Pueblo de Dios</em>.</p>
+        </article>
+      </div>
+
+      <div id="panel-rosario" role="tabpanel" aria-labelledby="tab-rosario" hidden>
+        <article class="page">
+          <div class="ros-head">
+            <div>
+              <div class="label" id="rosDia"></div>
+              <div class="ros-title" id="rosTitulo"></div>
+            </div>
+            <div class="sets" id="sets" aria-label="Elegir misterios"></div>
+          </div>
+          <div class="ros-prog"><span id="rosPaso"></span><span id="rosPct"></span></div>
+          <div class="bar blue"><div id="rosBar" style="width:0%"></div></div>
+          <div class="beads" id="beads" aria-label="Cuentas del rosario"></div>
+
+          <div class="pray">
+            <div class="label" id="pLabel"></div>
+            <h3 id="pTitle"></h3>
+            <p class="ptext" id="pText"></p>
+            <div class="mist" id="pMist" hidden>
+              <div class="mref" id="mRef"></div>
+              <p id="mMed"></p>
+              <div class="fruto">Fruto del misterio: <b id="mFruto"></b></div>
+            </div>
+          </div>
+
+          <div class="ros-ctrl">
+            <button class="navbtn" id="rPrev">‹ Anterior</button>
+            <span class="small" id="rosHint"></span>
+            <button class="next" id="rNext">Siguiente ›</button>
+          </div>
+          <div style="margin-top:14px;text-align:right"><button class="linkbtn" id="rReset">Empezar de nuevo</button></div>
+        </article>
+      </div>
+    </main>
+
+    <aside>
+      <div class="card">
+        <div class="label">Avance del día</div>
+        <div class="today-prog" style="margin-top:10px">
+          <svg class="ring" id="ring" viewBox="0 0 84 84" aria-hidden="true">
+            <circle class="bgc" cx="42" cy="42" r="34"></circle>
+            <circle class="fg" id="ringFg" cx="42" cy="42" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6" transform="rotate(-90 42 42)"></circle>
+            <text id="ringTxt" x="42" y="49" text-anchor="middle">0/5</text>
+          </svg>
+          <div>
+            <div class="stat-v" id="todayState">Sin empezar</div>
+            <div class="stat-l" id="todayRos">Rosario: sin empezar</div>
+          </div>
+        </div>
+        <div class="row3">
+          <div><div class="stat-l">Racha</div><div class="stat-v" id="racha">0</div></div>
+          <div><div class="stat-l">Amén</div><div class="stat-v" id="total">0</div></div>
+          <div><div class="stat-l">Rosarios</div><div class="stat-v" id="rosTotal">0</div></div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="stat-l">Plan hasta el 31 de diciembre</div>
+          <div class="bar"><div id="caminoBar" style="width:0%"></div></div>
+          <div class="stat-l" id="caminoTxt"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Últimos 14 días</h2>
+        <div class="week" id="week"></div>
+        <div class="legend"><span><i style="background:var(--ok)"></i>Amén</span><span><i style="background:var(--lapis-soft)"></i>Empezado</span><span><i style="background:var(--gold);border-radius:50%"></i>Rosario</span></div>
+      </div>
+
+      <div class="card">
+        <h2>Mi plan</h2>
+        <div id="camino"></div>
+        <p class="stat-l" style="margin:10px 0 0">Tocá un día para ir a su lectura. El punto rojo marca una fiesta.</p>
+      </div>
+
+      <div class="card">
+        <h2>Mis reflexiones</h2>
+        <ul class="jlist" id="jlist"></ul>
+        <p class="store-note" id="storeNote" style="margin:10px 0 0">Tu diario se guarda en este navegador.</p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const BASE_PLAN = [
+{ref:"Mt 11, 28", libro:"Evangelio según san Mateo",
+ texto:"Vengan a mí todos los que están afligidos y agobiados, y yo los aliviaré.",
+ contexto:"Jesús pronuncia estas palabras después de que varias ciudades de Galilea rechazaran su mensaje. Se dirige a la gente sencilla, cansada por el trabajo y también por una religión llena de normas pesadas que algunos maestros de la Ley imponían sin ayudar a cargarlas.",
+ ensenanza:"Jesús no promete una vida sin cargas: ofrece compartir el yugo, caminar al lado nuestro. Se presenta \"manso y humilde de corazón\". Dios no es un juez que exige cada vez más, sino alguien que alivia.",
+ reflexion:"Muchas veces intentamos resolver todo solos y rezamos cuando ya no damos más. Este versículo invierte el orden: primero ir a Él, y ahí la carga empieza a pesar distinto.",
+ frase:"No tenés que llegar entera; alcanza con llegar.",
+ preguntas:["¿Qué carga estoy llevando sola hoy?","¿Qué me impide dejarla en manos de Jesús?","¿A quién puedo aliviar yo, como Él me alivia a mí?"]},
+{ref:"Sal 23 (22), 1", libro:"Libro de los Salmos",
+ texto:"El Señor es mi pastor, nada me puede faltar.",
+ contexto:"El salmo se atribuye a David, que antes de ser rey fue pastor. En Israel el pastor guiaba al rebaño, lo defendía de las fieras y buscaba agua y pasto en tierras secas: la vida de las ovejas dependía de él.",
+ ensenanza:"Dios se muestra como quien conduce, protege y alimenta. Jesús retoma esta imagen cuando dice \"Yo soy el buen Pastor\" (Jn 10, 11), el que conoce a sus ovejas por su nombre y da la vida por ellas.",
+ reflexion:"\"Nada me puede faltar\" no quiere decir tener todo lo que quiero, sino no quedarme sin lo que necesito para seguir caminando. El pastor sabe mejor que la oveja dónde está el agua.",
+ frase:"Donde Él guía, Él provee.",
+ preguntas:["¿En qué parte de mi vida me cuesta dejarme guiar?","¿Qué \"pasto verde\" me regaló Dios esta semana y todavía no agradecí?"]},
+{ref:"Lc 1, 38", libro:"Evangelio según san Lucas",
+ texto:"Yo soy la servidora del Señor, que se cumpla en mí lo que has dicho.",
+ contexto:"El ángel Gabriel anuncia a María, una joven de Nazaret, que será la madre del Hijo de Dios. Ella se turba, pregunta \"¿cómo puede ser?\", y aun sin entenderlo todo responde con libertad.",
+ ensenanza:"Dios no impone: propone y espera la respuesta. El sí de María abre la puerta a la Encarnación. La fe no es tener todas las respuestas, sino confiar en quien nos habla.",
+ reflexion:"María dijo sí sin conocer el camino completo. Nuestros síes de todos los días, en el trabajo, en la familia, en lo que no elegimos, también pueden ser el lugar donde Dios se hace presente.",
+ frase:"Un sí sincero vale más que mil certezas.",
+ preguntas:["¿A qué me está invitando Dios que todavía no respondí?","¿Qué me ayuda a decir sí aunque no entienda todo?","¿Cómo puedo pedirle a María que me acompañe en eso?"]},
+{ref:"Jn 3, 16", libro:"Evangelio según san Juan",
+ texto:"Dios amó tanto al mundo, que entregó a su Hijo único para que todo el que cree en él no muera, sino que tenga Vida eterna.",
+ contexto:"Jesús conversa de noche con Nicodemo, un fariseo importante que lo va a buscar a escondidas porque quiere entender quién es. Jesús le habla de \"nacer de nuevo\" por el agua y el Espíritu.",
+ ensenanza:"Es el corazón del Evangelio: el amor de Dios toma la iniciativa. El versículo siguiente lo aclara: Dios no envió a su Hijo para condenar al mundo, sino para salvarlo.",
+ reflexion:"Nicodemo fue de noche, con dudas y con miedo al qué dirán. Dios también recibe nuestras preguntas y nuestras noches; no hace falta tener la fe resuelta para acercarse.",
+ frase:"Antes de que lo buscaras, ya te estaba amando.",
+ preguntas:["¿Creo de verdad que Dios me ama a mí, personalmente?","¿Qué \"noche\" o duda puedo llevarle hoy como Nicodemo?"]},
+{ref:"Lc 15, 20", libro:"Evangelio según san Lucas",
+ texto:"Cuando todavía estaba lejos, su padre lo vio y se conmovió profundamente; corrió a su encuentro, lo abrazó y lo besó.",
+ contexto:"Es la parábola del hijo pródigo. Jesús la cuenta ante fariseos que lo criticaban por comer con pecadores. El hijo menor había malgastado la herencia y vuelve con un discurso preparado para pedir que lo traten como a un jornalero.",
+ ensenanza:"El padre no espera el discurso: corre. En esa cultura un hombre mayor no corría en público; Jesús muestra a un Dios que deja de lado su dignidad para abrazar al que vuelve.",
+ reflexion:"A veces preparamos explicaciones para volver a Dios. Él solo espera vernos aparecer en el camino. El sacramento de la Reconciliación es ese abrazo.",
+ frase:"Dios no te espera con un reproche, te espera con un abrazo.",
+ preguntas:["¿De qué me cuesta volver?","¿Hoy me parezco más al hijo menor, al hermano mayor o al padre?","¿Hace cuánto que no me confieso?"]},
+{ref:"Mt 5, 14", libro:"Evangelio según san Mateo",
+ texto:"Ustedes son la luz del mundo.",
+ contexto:"Es parte del Sermón de la Montaña, justo después de las Bienaventuranzas. Jesús no habla a sabios ni a sacerdotes, sino a pescadores, campesinos y gente común de Galilea.",
+ ensenanza:"Jesús no dice \"deberían ser\", dice \"son\". La luz es un don recibido que se comparte; nadie enciende una lámpara para taparla con un cajón.",
+ reflexion:"La luz se nota en lo pequeño: una palabra amable, un trabajo bien hecho, paciencia con la persona que nos cuesta. No hace falta hacer algo extraordinario.",
+ frase:"No hace falta brillar fuerte; alcanza con no apagarse.",
+ preguntas:["¿Dónde estoy escondiendo mi luz?","¿Quién necesita hoy un poco de mi luz?"]},
+{ref:"Jn 14, 27", libro:"Evangelio según san Juan",
+ texto:"Les dejo la paz, les doy mi paz, pero no como la da el mundo. ¡No se inquieten ni teman!",
+ contexto:"Es la Última Cena. Jesús se despide de sus discípulos sabiendo lo que viene esa misma noche; ellos están tristes y angustiados porque no entienden por qué se va.",
+ ensenanza:"La paz de Jesús no depende de que todo salga bien: es la certeza de su presencia en medio de la tormenta. Por eso la Iglesia repite estas palabras en cada Misa, antes de darnos la paz.",
+ reflexion:"La paz del mundo es ausencia de problemas. La paz de Cristo es su presencia dentro de los problemas.",
+ frase:"La paz no es que pase la tormenta, es saber quién está en la barca.",
+ preguntas:["¿Qué me está quitando la paz hoy?","¿Cómo puedo recibir la paz de Cristo en esa situación concreta?"]},
+{ref:"Is 41, 10", libro:"Libro de Isaías",
+ texto:"No temas, porque yo estoy contigo; no te inquietes, porque yo soy tu Dios. Yo te fortalezco y te ayudo.",
+ contexto:"Son palabras dirigidas al pueblo de Israel exiliado en Babilonia, lejos de su tierra y de su templo, con la sensación de que Dios lo había olvidado.",
+ ensenanza:"Dios no quita el exilio de un día para otro, pero afirma que está ahí. El \"no temas\" es una de las frases que más se repiten en toda la Biblia.",
+ reflexion:"El miedo se achica cuando recordamos quién camina con nosotros. No se trata de negar lo que asusta, sino de no enfrentarlo solos.",
+ frase:"El miedo habla fuerte, pero Dios tiene la última palabra.",
+ preguntas:["¿Cuál es el miedo que más me visita?","¿En qué momento pasado Dios me sostuvo, y puedo recordarlo hoy?"]},
+{ref:"Jn 15, 5", libro:"Evangelio según san Juan",
+ texto:"Yo soy la vid, ustedes los sarmientos. El que permanece en mí, y yo en él, da mucho fruto, porque separados de mí nada pueden hacer.",
+ contexto:"Jesús lo dice en la Última Cena. Israel conocía bien la vid: los profetas llamaban al pueblo \"la viña del Señor\", y los viñedos rodeaban Jerusalén.",
+ ensenanza:"El fruto no nace del esfuerzo aislado sino de la unión con Él. Permanecer es concreto: oración, sacramentos, Palabra, comunidad.",
+ reflexion:"Un sarmiento no se esfuerza para dar uvas: se queda unido a la planta y la savia hace el resto.",
+ frase:"Permanecer también es hacer.",
+ preguntas:["¿Qué me mantiene unida a Jesús cada día?","¿Qué frutos veo en mi vida, y cuáles todavía faltan?"]},
+{ref:"Mt 22, 37-39", libro:"Evangelio según san Mateo",
+ texto:"Amarás al Señor, tu Dios, con todo tu corazón, con toda tu alma y con todo tu espíritu. Y el segundo es semejante: amarás a tu prójimo como a ti mismo.",
+ contexto:"Un doctor de la Ley quiere poner a prueba a Jesús y le pregunta cuál es el mandamiento más grande. Los maestros judíos contaban 613 preceptos y discutían cuál era el principal.",
+ ensenanza:"Jesús une dos textos del Antiguo Testamento (Dt 6, 5 y Lv 19, 18): el amor a Dios y al prójimo son inseparables. Y deja a la vista un tercer amor: el que nos tenemos a nosotros mismos.",
+ reflexion:"No se puede amar al Dios que no vemos despreciando al hermano que vemos. El amor a Dios se comprueba en la vida diaria.",
+ frase:"El amor a Dios se prueba en la mesa, en el trabajo y en la fila del banco.",
+ preguntas:["¿A quién me cuesta amar hoy?","¿Me trato a mí misma con el amor con que Dios me trata?"]},
+{ref:"Mc 4, 39", libro:"Evangelio según san Marcos",
+ texto:"Despertándose, él increpó al viento y dijo al mar: \"¡Silencio! ¡Cállate!\". El viento se aplacó y sobrevino una gran calma.",
+ contexto:"Ocurre en el lago de Galilea, famoso por sus tormentas repentinas. Los discípulos, varios de ellos pescadores con experiencia, tienen miedo de hundirse; mientras tanto, Jesús duerme en la popa.",
+ ensenanza:"Jesús tiene autoridad sobre lo que nos desborda. Después pregunta: \"¿Por qué tienen miedo? ¿Todavía no tienen fe?\". La fe es confiar aunque parezca que Dios duerme.",
+ reflexion:"Que Jesús duerma no significa que no le importe: está en la misma barca, corriendo la misma suerte que nosotros.",
+ frase:"Si Él está en tu barca, la tormenta no tiene la última palabra.",
+ preguntas:["¿Cuál es mi tormenta hoy?","¿Qué le quiero gritar a Jesús, como los discípulos?"]},
+{ref:"Lam 3, 22-23", libro:"Libro de las Lamentaciones",
+ texto:"El amor del Señor no se extingue, su misericordia no se agota: se renuevan cada mañana. ¡Qué grande es tu fidelidad!",
+ contexto:"Las Lamentaciones lloran la destrucción de Jerusalén por los babilonios, en el año 587 a. C. En medio de ese dolor aparece, de golpe, este acto de esperanza.",
+ ensenanza:"La fe no niega el dolor: en medio de él recuerda la fidelidad de Dios. Cada mañana es un comienzo nuevo que Él nos regala.",
+ reflexion:"La misericordia de hoy no se gastó ayer. Lo que salió mal no agota lo que Dios tiene para darnos hoy.",
+ frase:"Hoy Dios empieza de nuevo con vos.",
+ preguntas:["¿Qué necesito dejar atrás de ayer?","¿Por qué misericordia de esta mañana puedo dar gracias?"]},
+{ref:"Mt 14, 31", libro:"Evangelio según san Mateo",
+ texto:"En seguida, Jesús le tendió la mano y lo sostuvo, mientras le decía: \"Hombre de poca fe, ¿por qué dudaste?\".",
+ contexto:"Jesús camina sobre el agua hacia la barca. Pedro se anima a salir a su encuentro, pero al sentir la fuerza del viento tiene miedo y empieza a hundirse.",
+ ensenanza:"Pedro se hunde cuando mira el viento en lugar de mirar a Jesús. Pero incluso la duda recibe una mano extendida, y en seguida.",
+ reflexion:"Pedro fue el único que se animó a bajar de la barca. Dudar después de animarse no es un fracaso: es parte del camino de la fe.",
+ frase:"Mirá a Jesús, no al viento.",
+ preguntas:["¿Qué me distrae de mirar a Jesús?","¿En qué me estoy animando a salir de la barca?"]},
+{ref:"Jn 6, 35", libro:"Evangelio según san Juan",
+ texto:"Yo soy el pan de Vida. El que viene a mí jamás tendrá hambre; el que cree en mí jamás tendrá sed.",
+ contexto:"Después de la multiplicación de los panes, la gente busca a Jesús porque comió hasta saciarse. Él los lleva a un hambre más profunda y les recuerda el maná que Dios dio en el desierto.",
+ ensenanza:"Para la Iglesia, este discurso anuncia la Eucaristía: Jesús se da como alimento verdadero. Muchos se escandalizaron y se fueron; Pedro respondió \"¿A quién iremos?\".",
+ reflexion:"Tenemos hambres que ninguna cosa llena: sentido, amor, perdón, compañía. Jesús no da solo algo, se da a sí mismo.",
+ frase:"Lo que tu alma busca se sirve en el altar.",
+ preguntas:["¿De qué tengo hambre de verdad?","¿Cómo estoy viviendo la Misa y la comunión?"]},
+{ref:"Flp 4, 13", libro:"Carta de san Pablo a los Filipenses",
+ texto:"Yo lo puedo todo en aquel que me conforta.",
+ contexto:"Pablo escribe desde la cárcel a la comunidad de Filipos para agradecer la ayuda que le mandaron. Justo antes cuenta que aprendió a vivir tanto en la escasez como en la abundancia.",
+ ensenanza:"No es una frase de autoayuda para lograr todo lo que uno quiere. Habla de poder atravesar cualquier situación sostenido por Cristo.",
+ reflexion:"La fuerza no sale de mí: viene de Él en mí. Por eso Pablo puede estar en paz aun preso.",
+ frase:"No es \"yo puedo\"; es \"Él puede en mí\".",
+ preguntas:["¿Qué situación me supera hoy?","¿Aprendí a estar en paz tanto en la escasez como en la abundancia?"]},
+{ref:"1 Cor 13, 4.7", libro:"Primera carta de san Pablo a los Corintios",
+ texto:"El amor es paciente, es servicial; el amor no es envidioso, no hace alarde, no se envanece. Todo lo disculpa, todo lo cree, todo lo espera, todo lo soporta.",
+ contexto:"Pablo escribe a la comunidad de Corinto, dividida por celos y por competencias sobre quién tenía los dones espirituales más importantes.",
+ ensenanza:"El don más grande de todos es el amor. Pablo lo describe con verbos, es decir, con acciones concretas, no con sentimientos.",
+ reflexion:"Probá leerlo cambiando \"el amor\" por \"Jesús\": todo encaja. Después cambialo por tu nombre y mirá dónde falta.",
+ frase:"El amor se conjuga en verbos.",
+ preguntas:["¿Cuál de estas características me cuesta más?","¿Con quién puedo practicar la paciencia hoy?"]},
+{ref:"Mt 6, 33", libro:"Evangelio según san Mateo",
+ texto:"Busquen primero el Reino de Dios y su justicia, y todo lo demás se les dará por añadidura.",
+ contexto:"En el Sermón de la Montaña, Jesús habla de la preocupación por el mañana: los pájaros del cielo que no siembran, los lirios del campo más bellos que Salomón.",
+ ensenanza:"No es una invitación a la irresponsabilidad, sino a ordenar las prioridades. Cuando Dios está primero, lo demás encuentra su lugar.",
+ reflexion:"La preocupación mira el mañana; la confianza vive el hoy con Dios. \"A cada día le basta su aflicción\", dice Jesús en el versículo siguiente.",
+ frase:"Primero Dios, y lo demás se acomoda.",
+ preguntas:["¿Qué ocupa realmente el primer lugar en mi agenda?","¿Qué preocupación puedo confiarle hoy?"]},
+{ref:"Mt 7, 7", libro:"Evangelio según san Mateo",
+ texto:"Pidan y se les dará; busquen y encontrarán; llamen y se les abrirá.",
+ contexto:"Jesús enseña sobre la oración y compara a Dios con un padre: ninguno le da una piedra a su hijo cuando le pide pan.",
+ ensenanza:"Es una invitación a la oración perseverante. Dios es Padre y da cosas buenas, aunque no siempre lo que pedimos ni del modo en que lo pedimos.",
+ reflexion:"Los tres verbos van creciendo: pedir, buscar, golpear la puerta. Insistir en la oración también es fe.",
+ frase:"Seguí golpeando: detrás de la puerta hay un Padre.",
+ preguntas:["¿Qué estoy pidiendo hace tiempo?","¿Confío en que Dios responde con lo mejor, aunque no sea lo que imaginé?"]},
+{ref:"Jn 8, 12", libro:"Evangelio según san Juan",
+ texto:"Yo soy la luz del mundo. El que me sigue no andará en tinieblas, sino que tendrá la luz de la Vida.",
+ contexto:"Jesús lo dice en el Templo durante la fiesta de las Tiendas, cuando se encendían grandes candelabros que iluminaban toda Jerusalén por la noche.",
+ ensenanza:"En medio de esa fiesta de luces, Jesús se presenta como la luz verdadera. Seguirlo es caminar viendo.",
+ reflexion:"Con Él no siempre vemos todo el camino, pero sí el próximo paso. Y eso alcanza para avanzar.",
+ frase:"No ves todo el camino, pero ves el próximo paso.",
+ preguntas:["¿Qué parte de mi vida está en sombras?","¿Cuál es el próximo paso que me muestra?"]},
+{ref:"Mt 25, 40", libro:"Evangelio según san Mateo",
+ texto:"Les aseguro que cada vez que lo hicieron con el más pequeño de mis hermanos, lo hicieron conmigo.",
+ contexto:"Es la escena del juicio final: el Rey separa a las personas según cómo trataron al hambriento, al forastero, al enfermo y al preso.",
+ ensenanza:"Cristo se identifica con quien sufre. De este texto nacen las obras de misericordia que enseña la Iglesia.",
+ reflexion:"Jesús está disfrazado en quien menos esperamos: el que pide en la esquina, el compañero de trabajo difícil, el familiar enfermo.",
+ frase:"Cada persona que ayudás tiene el rostro de Cristo.",
+ preguntas:["¿Quién es \"el más pequeño\" cerca mío?","¿Qué obra de misericordia puedo hacer esta semana?"]},
+{ref:"Sal 51 (50), 12", libro:"Libro de los Salmos",
+ texto:"Crea en mí, Dios mío, un corazón puro, y renueva la firmeza de mi espíritu.",
+ contexto:"Es el gran salmo del arrepentimiento. La tradición lo atribuye a David después de su pecado con Betsabé, cuando el profeta Natán lo enfrenta con la verdad.",
+ ensenanza:"Dios no solo perdona: recrea. El verbo \"crear\" es el mismo del Génesis. La Iglesia reza este salmo cada viernes y en Cuaresma.",
+ reflexion:"Arrepentirse no es hundirse en la culpa: es pedir un corazón nuevo y dejarse hacer.",
+ frase:"Dios no remienda: hace nuevo.",
+ preguntas:["¿Qué necesito que Dios renueve en mí?","¿Qué me cuesta reconocer delante de Él?"]},
+{ref:"Is 43, 1", libro:"Libro de Isaías",
+ texto:"No temas, porque yo te he redimido, te he llamado por tu nombre, tú me perteneces.",
+ contexto:"Dios habla a Israel durante el exilio y le recuerda que Él lo formó, lo sacó de Egipto y no lo va a abandonar.",
+ ensenanza:"Dios conoce a cada uno por su nombre. Pertenecerle es nuestra identidad más profunda, la que recibimos en el Bautismo.",
+ reflexion:"Antes que cualquier rol, trabajo o título, sos hija de Dios. Nada de lo que hagas o dejes de hacer cambia eso.",
+ frase:"Dios sabe tu nombre y lo pronuncia con amor.",
+ preguntas:["¿Dónde busco mi identidad lejos de Dios?","¿Qué significa hoy para mí estar bautizada?"]},
+{ref:"1 Sam 3, 10", libro:"Primer libro de Samuel",
+ texto:"Habla, Señor, porque tu servidor escucha.",
+ contexto:"El niño Samuel sirve en el santuario de Silo. Dios lo llama de noche y él cree que lo llama el sacerdote Elí. A la tercera vez, Elí le enseña cómo responder.",
+ ensenanza:"Orar también es escuchar. Y a veces necesitamos a alguien, como Elí, que nos ayude a reconocer la voz de Dios.",
+ reflexion:"Muchas veces rezamos como si dijéramos \"escuchá, Señor, que tu servidora habla\". Samuel invierte el orden.",
+ frase:"Rezar también es hacer silencio.",
+ preguntas:["¿Cuánto silencio hay en mi oración?","¿Quién me ayuda a reconocer la voz de Dios?"]},
+{ref:"Sal 46 (45), 11", libro:"Libro de los Salmos",
+ texto:"Deténganse y reconozcan que yo soy Dios.",
+ contexto:"Es un salmo de confianza compuesto en tiempos de guerra, cuando Jerusalén se sentía rodeada de enemigos y todo parecía temblar.",
+ ensenanza:"Dios invita a frenar y soltar el control. Cuando dejamos de pretender manejarlo todo, lo reconocemos actuando.",
+ reflexion:"En una vida acelerada, detenerse es un acto de fe. Unos minutos quieta delante de Dios también son oración.",
+ frase:"Pará un momento: Dios sigue siendo Dios.",
+ preguntas:["¿Qué necesito soltar hoy?","¿Cuándo fue la última vez que me detuve solo para estar con Dios?"]},
+{ref:"Jn 13, 34", libro:"Evangelio según san Juan",
+ texto:"Les doy un mandamiento nuevo: ámense los unos a los otros. Así como yo los he amado, ámense también ustedes.",
+ contexto:"Jesús lo dice en la Última Cena, justo después de lavar los pies a sus discípulos, una tarea que en esa época hacían los esclavos.",
+ ensenanza:"Lo nuevo es la medida: \"como yo los he amado\", es decir, sirviendo y hasta dar la vida.",
+ reflexion:"El amor cristiano se agacha. No espera ser servido: se pone a servir.",
+ frase:"Amar como Jesús es agacharse a servir.",
+ preguntas:["¿A quién puedo \"lavarle los pies\" hoy?","¿Qué servicio estoy haciendo de mala gana?"]},
+{ref:"Jn 11, 25", libro:"Evangelio según san Juan",
+ texto:"Yo soy la Resurrección y la Vida. El que cree en mí, aunque muera, vivirá.",
+ contexto:"Lázaro, amigo de Jesús, murió hace cuatro días. Su hermana Marta le dice a Jesús que si hubiera estado ahí, su hermano no habría muerto. Jesús llora, y después devuelve a Lázaro a la vida.",
+ ensenanza:"Jesús no es indiferente al dolor: llora con los que lloran. Pero su última palabra es la vida.",
+ reflexion:"Nuestros duelos, Jesús los llora con nosotros. La esperanza cristiana no borra la tristeza: la atraviesa.",
+ frase:"Con Jesús, la muerte no tiene la última palabra.",
+ preguntas:["¿Qué pérdida llevo en el corazón?","¿Qué parte de mí necesita volver a la vida?"]},
+{ref:"Jn 21, 17", libro:"Evangelio según san Juan",
+ texto:"Señor, tú lo sabes todo; sabes que te quiero.",
+ contexto:"Después de la Resurrección, junto al lago, Jesús le pregunta tres veces a Pedro si lo ama. Son tres veces, como las tres veces que Pedro lo negó la noche de la Pasión.",
+ ensenanza:"Jesús sana la herida con amor, no con reproches, y además le confía una misión: \"Apacienta mis ovejas\".",
+ reflexion:"Nuestros fracasos no nos descalifican. Jesús sigue confiando en nosotros y nos vuelve a enviar.",
+ frase:"Tus caídas no cancelan tu misión.",
+ preguntas:["¿Qué negación mía necesita ser sanada?","¿Qué misión me está confiando Jesús hoy?"]},
+{ref:"Sant 2, 17", libro:"Carta de Santiago",
+ texto:"La fe, si no va acompañada de las obras, está completamente muerta.",
+ contexto:"Santiago escribe a comunidades donde algunos se contentaban con palabras piadosas, pero no ayudaban al hermano que no tenía ropa ni comida.",
+ ensenanza:"La fe y las obras van juntas: es una enseñanza central de la Iglesia. Las obras no reemplazan la fe, la hacen visible.",
+ reflexion:"Decirle \"que Dios te ayude\" a quien tiene frío, sin darle abrigo, es una fe que no se mueve.",
+ frase:"La fe que no se mueve, se enfría.",
+ preguntas:["¿Qué obra concreta puede expresar mi fe hoy?","¿Hay alguien a quien le digo palabras lindas pero no ayudo?"]},
+{ref:"Rom 8, 28", libro:"Carta de san Pablo a los Romanos",
+ texto:"Sabemos que Dios dispone todas las cosas para el bien de los que lo aman.",
+ contexto:"Pablo escribe a los cristianos de Roma sobre el sufrimiento presente y la esperanza: la creación entera \"gime\" esperando la plenitud.",
+ ensenanza:"No dice que todo lo que pasa sea bueno, sino que Dios puede sacar bien de todo, incluso de lo que duele.",
+ reflexion:"Mirando para atrás, muchas veces descubrimos cómo algo difícil nos hizo crecer o nos llevó a un lugar mejor.",
+ frase:"Dios escribe derecho con renglones torcidos.",
+ preguntas:["¿Qué situación difícil del pasado hoy veo con otros ojos?","¿Qué le confío ahora, aunque todavía no entienda?"]},
+{ref:"Mt 28, 20", libro:"Evangelio según san Mateo",
+ texto:"Y yo estaré siempre con ustedes hasta el fin del mundo.",
+ contexto:"Son las últimas palabras del Evangelio de Mateo, cuando Jesús resucitado envía a sus discípulos a anunciar la Buena Noticia a todos los pueblos.",
+ ensenanza:"Mateo empieza su Evangelio llamando a Jesús \"Emanuel, Dios con nosotros\" (Mt 1, 23) y lo termina con la misma promesa.",
+ reflexion:"No hay un solo día en que estés sola. Ni este.",
+ frase:"Siempre también quiere decir hoy.",
+ preguntas:["¿En qué momento del día siento más su presencia?","¿Dónde me cuesta reconocerlo?"]},
+{ref:"Lc 1, 46-47", libro:"Evangelio según san Lucas",
+ texto:"Mi alma canta la grandeza del Señor, y mi espíritu se estremece de gozo en Dios, mi Salvador.",
+ contexto:"María, embarazada de Jesús, visita a su prima Isabel. Al ser recibida con alegría, proclama el Magníficat, el canto de una joven humilde que ve cómo Dios levanta a los pequeños.",
+ ensenanza:"Es un canto de gratitud y alabanza: Dios mira la pequeñez de su servidora. La Iglesia lo reza cada tarde en la oración de Vísperas.",
+ reflexion:"Terminar un camino agradeciendo cambia la forma de mirar todo lo vivido.",
+ frase:"Un corazón agradecido ve a Dios en todas partes.",
+ preguntas:["¿Qué grandezas hizo Dios en mí este mes?","¿Cómo puedo alabarlo hoy con mi vida?"]}
+];
+
+const PLAN_OCT_NOV = [
+{fecha:"2026-10-24", ref:"Jn 2, 5", libro:"Evangelio según san Juan",
+ texto:"Su madre dijo a los sirvientes: \"Hagan todo lo que él les diga\".",
+ contexto:"En una boda en Caná de Galilea se termina el vino, algo que avergonzaría a la familia de los novios. María se da cuenta antes que nadie y se lo dice a Jesús.",
+ ensenanza:"Son las últimas palabras de María en los Evangelios, y resumen su misión: llevarnos a Jesús. Ella intercede, y después señala a su Hijo.",
+ reflexion:"María ve la necesidad antes de que se note. Así acompaña también nuestra vida: no reemplaza a Jesús, nos acerca a Él.",
+ frase:"Donde falta el vino, María ya está pidiendo por vos.",
+ preguntas:["¿Qué \"vino\" se está terminando en mi casa o en mi corazón?","¿Qué me está diciendo Jesús que haga, y todavía no hago?"]},
+{fecha:"2026-10-25", ref:"Mc 10, 51", libro:"Evangelio según san Marcos",
+ texto:"Jesús le preguntó: \"¿Qué quieres que haga por ti?\". Él le respondió: \"Maestro, que yo pueda ver\".",
+ contexto:"Bartimeo es un mendigo ciego sentado al borde del camino en Jericó. Cuando escucha que pasa Jesús, grita, y aunque muchos lo mandan callar, grita más fuerte.",
+ ensenanza:"Jesús se detiene por el que todos querían silenciar. Y le pregunta lo que quiere: Dios respeta nuestra libertad y quiere escuchar nuestro deseo.",
+ reflexion:"Bartimeo tira el manto, lo único que tenía, y salta hacia Jesús. Después de ver, lo sigue por el camino.",
+ frase:"Aunque te digan que te calles, seguí llamando a Jesús.",
+ preguntas:["Si Jesús me preguntara hoy \"¿qué querés que haga por vos?\", ¿qué le respondería?","¿Qué \"manto\" me cuesta soltar para ir hacia Él?"]},
+{fecha:"2026-10-26", ref:"Lc 10, 41-42", libro:"Evangelio según san Lucas",
+ texto:"Marta, Marta, te inquietas y te agitas por muchas cosas, y sin embargo, pocas cosas, o más bien, una sola es necesaria. María eligió la mejor parte.",
+ contexto:"Jesús visita la casa de sus amigas Marta y María en Betania. Marta se desvive atendiendo; María se sienta a los pies de Jesús a escucharlo. Marta se queja.",
+ ensenanza:"Jesús no desprecia el servicio de Marta, pero le muestra el orden: primero escuchar, después hacer. La escucha es la raíz del servicio.",
+ reflexion:"Vivimos como Marta: listas, pendientes, urgencias. Este rato de oración es tu momento de María.",
+ frase:"Una sola cosa es necesaria: estar a sus pies.",
+ preguntas:["¿Me parezco más a Marta o a María?","¿Qué urgencia me está robando el tiempo con Dios?"]},
+{fecha:"2026-10-27", ref:"Lc 10, 33-34", libro:"Evangelio según san Lucas",
+ texto:"Un samaritano que viajaba por allí, al pasar junto a él, lo vio y se conmovió. Entonces se acercó y vendó sus heridas.",
+ contexto:"Un maestro de la Ley pregunta \"¿quién es mi prójimo?\". Jesús cuenta de un hombre asaltado en el camino a Jericó. Un sacerdote y un levita pasan de largo; el que se detiene es un samaritano, alguien despreciado por los judíos.",
+ ensenanza:"Jesús da vuelta la pregunta: no se trata de quién merece mi ayuda, sino de hacerme prójimo del que está caído.",
+ reflexion:"Los que pasaron de largo seguramente tenían buenas razones y apuro. La compasión casi siempre llega a destiempo, en medio de otra cosa.",
+ frase:"El prójimo no se elige: se encuentra en el camino.",
+ preguntas:["¿Junto a quién paso de largo?","¿Qué me hace falta para detenerme?"]},
+{fecha:"2026-10-28", ref:"Mt 16, 15-16", libro:"Evangelio según san Mateo",
+ texto:"\"Y ustedes, ¿quién dicen que soy?\". Tomando la palabra, Simón Pedro respondió: \"Tú eres el Mesías, el Hijo de Dios vivo\".",
+ fiesta:"Santos Simón y Judas, apóstoles",
+ contexto:"En Cesarea de Filipo, lejos de Jerusalén, Jesús pregunta primero qué dice la gente de Él. Después hace la pregunta personal a los apóstoles.",
+ ensenanza:"La fe no es solo repetir lo que dicen otros: es responder en primera persona. Sobre esa fe de Pedro, Jesús edifica su Iglesia.",
+ reflexion:"Hoy celebramos a dos apóstoles de los que sabemos poco. Dieron la vida por esta misma respuesta.",
+ frase:"La fe empieza cuando la respuesta es tuya.",
+ preguntas:["¿Quién es Jesús para mí, hoy, con mis palabras?","¿Mi vida muestra esa respuesta?"]},
+{fecha:"2026-10-29", ref:"Lc 17, 5-6", libro:"Evangelio según san Lucas",
+ texto:"Los Apóstoles dijeron al Señor: \"Auméntanos la fe\". Él respondió: \"Si ustedes tuvieran fe del tamaño de un grano de mostaza…\".",
+ contexto:"Jesús acaba de pedirles que perdonen siete veces por día al hermano que se arrepiente. Los apóstoles sienten que no les da la fe para tanto.",
+ ensenanza:"Jesús no mide la fe por su tamaño, sino por su autenticidad. Una fe pequeña pero verdadera puede mucho, porque se apoya en Dios.",
+ reflexion:"Pedir más fe ya es un acto de fe. Es una de las oraciones más sencillas y más poderosas.",
+ frase:"Una fe chiquita en un Dios grande alcanza.",
+ preguntas:["¿En qué situación necesito que el Señor me aumente la fe?","¿A quién me cuesta perdonar?"]},
+{fecha:"2026-10-30", ref:"Lc 19, 5", libro:"Evangelio según san Lucas",
+ texto:"Zaqueo, baja pronto, porque hoy tengo que alojarme en tu casa.",
+ contexto:"Zaqueo era jefe de los recaudadores de impuestos en Jericó, rico y mal visto por colaborar con Roma. Como era bajo, se subió a un árbol para ver pasar a Jesús.",
+ ensenanza:"Jesús lo llama por su nombre y se invita a su casa antes de que Zaqueo cambie. El encuentro produce la conversión, no al revés.",
+ reflexion:"Zaqueo solo quería mirar de lejos. Jesús quería entrar. A veces nos quedamos en el árbol, curiosos pero a distancia.",
+ frase:"Jesús no quiere que lo mires de lejos: quiere entrar a tu casa.",
+ preguntas:["¿Estoy mirando a Jesús desde el árbol?","¿Qué cambiaría en mi casa si Él se quedara hoy?"]},
+{fecha:"2026-10-31", ref:"Sal 139 (138), 13-14", libro:"Libro de los Salmos",
+ texto:"Tú creaste mis entrañas, me plasmaste en el seno de mi madre. Te doy gracias porque fui formado de manera tan admirable.",
+ contexto:"El salmista se asombra de que Dios lo conoce por completo: cuando se sienta y se levanta, sus pensamientos, sus caminos. No hay lugar donde pueda estar lejos de Él.",
+ ensenanza:"Cada persona es obra querida de Dios desde antes de nacer. Nuestra dignidad no depende de lo que hacemos sino de quién nos hizo.",
+ reflexion:"Muchas veces nos miramos con dureza. Este salmo nos invita a mirarnos como nos mira Dios: con asombro.",
+ frase:"Sos obra de las manos de Dios.",
+ preguntas:["¿Qué parte de mí me cuesta aceptar?","¿Puedo dar gracias hoy por cómo Dios me hizo?"]},
+{fecha:"2026-11-01", ref:"Mt 5, 3-4", libro:"Evangelio según san Mateo",
+ texto:"Felices los que tienen alma de pobre, porque a ellos les pertenece el Reino de los Cielos. Felices los afligidos, porque serán consolados.",
+ fiesta:"Todos los Santos",
+ contexto:"Es el comienzo del Sermón de la Montaña. Jesús proclama felices a los que el mundo considera perdedores: pobres, tristes, perseguidos.",
+ ensenanza:"Las Bienaventuranzas son el retrato de Jesús y el camino de la santidad. Los santos no fueron perfectos: vivieron estas palabras.",
+ reflexion:"Hoy celebramos a todos los santos, también a los anónimos: abuelas, vecinos, gente sencilla que amó mucho. La santidad está al alcance de todos.",
+ frase:"Ser santo es dejar que Dios te haga feliz a su manera.",
+ preguntas:["¿Qué bienaventuranza me toca más de cerca hoy?","¿Qué santo o santa conocí en mi propia vida?"]},
+{fecha:"2026-11-02", ref:"Jn 14, 2-3", libro:"Evangelio según san Juan",
+ texto:"En la casa de mi Padre hay muchas habitaciones. Voy a prepararles un lugar, y volveré para llevarlos conmigo, a fin de que donde yo esté, estén también ustedes.",
+ fiesta:"Conmemoración de los Fieles Difuntos",
+ contexto:"En la Última Cena, los discípulos se angustian porque Jesús habla de irse. Él los consuela con esta promesa.",
+ ensenanza:"La muerte no es el final sino un paso hacia la casa del Padre. La Iglesia reza hoy por todos los que partieron, porque el amor sigue unido más allá de la muerte.",
+ reflexion:"Recordá con cariño a los que ya partieron. Rezar por ellos es seguir amándolos.",
+ frase:"Hay un lugar preparado para vos, y para los que amás.",
+ preguntas:["¿Por quién quiero rezar hoy especialmente?","¿Cómo vivo la esperanza de volver a encontrarme con ellos?"]},
+{fecha:"2026-11-03", ref:"Mt 5, 44", libro:"Evangelio según san Mateo",
+ texto:"Amen a sus enemigos y rueguen por sus perseguidores.",
+ contexto:"En el Sermón de la Montaña, Jesús corrige la idea de amar solo al que nos ama. Dice que el Padre hace salir el sol sobre buenos y malos.",
+ ensenanza:"Es de lo más difícil del Evangelio. Amar al enemigo no es sentir cariño, sino desearle el bien y rezar por él.",
+ reflexion:"Rezar por quien nos lastimó no justifica lo que hizo: nos libera a nosotros del rencor.",
+ frase:"El rencor pesa; la oración por el otro libera.",
+ preguntas:["¿Hay alguien por quien me cuesta rezar?","¿Puedo nombrarlo hoy ante Dios, aunque sea en voz baja?"]},
+{fecha:"2026-11-04", ref:"Mt 18, 21-22", libro:"Evangelio según san Mateo",
+ texto:"\"Señor, ¿cuántas veces tendré que perdonar a mi hermano? ¿Hasta siete veces?\". Jesús le respondió: \"No te digo hasta siete, sino hasta setenta veces siete\".",
+ contexto:"Pedro cree ser generoso: los rabinos enseñaban perdonar tres veces, y él propone siete. Jesús responde con una cifra que significa \"siempre\".",
+ ensenanza:"El perdón no lleva cuenta. Jesús sigue con la parábola del servidor al que le perdonaron una deuda enorme y no quiso perdonar una pequeña.",
+ reflexion:"Perdonamos porque primero fuimos perdonados. Y perdonar no siempre es olvidar: es no dejar que la herida mande.",
+ frase:"El perdón no lleva la cuenta.",
+ preguntas:["¿Qué ofensa sigo contando?","¿Cuánto me ha perdonado Dios a mí?"]},
+{fecha:"2026-11-05", ref:"Lc 6, 36", libro:"Evangelio según san Lucas",
+ texto:"Sean misericordiosos, como el Padre de ustedes es misericordioso.",
+ contexto:"Es parte del Sermón de la llanura en Lucas. Jesús habla de no juzgar, no condenar y dar con generosidad.",
+ ensenanza:"La medida de nuestra misericordia es la del Padre. El papa Francisco llamó a Jesús \"el rostro de la misericordia del Padre\".",
+ reflexion:"Misericordia es tener el corazón cerca de la miseria del otro, sin juzgarlo desde arriba.",
+ frase:"Mirá a los demás como Dios te mira a vos.",
+ preguntas:["¿A quién estoy juzgando con dureza?","¿Qué gesto de misericordia puedo tener hoy?"]},
+{fecha:"2026-11-06", ref:"Mt 6, 6", libro:"Evangelio según san Mateo",
+ texto:"Cuando ores, entra en tu habitación, cierra la puerta y ora a tu Padre que está en lo secreto.",
+ contexto:"Jesús critica a quienes rezaban en las esquinas para ser vistos. Enseña una oración sin espectadores.",
+ ensenanza:"La oración es un encuentro íntimo con el Padre, que ve lo escondido. No necesita público ni palabras rebuscadas.",
+ reflexion:"Tu \"habitación\" puede ser el colectivo, la cocina temprano o este rato frente a la pantalla. Lo importante es cerrar la puerta a las distracciones.",
+ frase:"Dios te espera donde nadie más te ve.",
+ preguntas:["¿Dónde está mi \"habitación\" para rezar?","¿Qué puerta tengo que cerrar para estar a solas con Dios?"]},
+{fecha:"2026-11-07", ref:"Mt 6, 9-10", libro:"Evangelio según san Mateo",
+ texto:"Ustedes oren de esta manera: Padre nuestro, que estás en el cielo, santificado sea tu Nombre, que venga tu Reino, que se haga tu voluntad en la tierra como en el cielo.",
+ contexto:"Después de enseñar a rezar en lo secreto, Jesús da a sus discípulos la oración que la Iglesia reza desde entonces en cada Misa.",
+ ensenanza:"Empieza con \"Padre\": una relación de hijos. Y \"nuestro\": nunca rezamos solos. Primero pedimos por las cosas de Dios, después por las nuestras.",
+ reflexion:"Lo rezamos tantas veces que puede volverse automático. Hoy rezalo despacio, una frase por vez.",
+ frase:"Rezá el Padre Nuestro como si fuera la primera vez.",
+ preguntas:["¿Qué frase del Padre Nuestro me cuesta más decir de corazón?","¿Qué significa hoy para mí \"hágase tu voluntad\"?"]},
+{fecha:"2026-11-08", ref:"Lc 12, 34", libro:"Evangelio según san Lucas",
+ texto:"Allí donde tengan su tesoro, tendrán también su corazón.",
+ contexto:"Jesús habla del peligro de acumular riquezas, después de contar la parábola del rico que agrandó sus graneros y murió esa misma noche.",
+ ensenanza:"El corazón sigue a lo que valoramos. Jesús invita a poner el tesoro en lo que no se pierde: Dios y los demás.",
+ reflexion:"Una forma sencilla de saber cuál es mi tesoro: mirar en qué pienso cuando no tengo que pensar en nada.",
+ frase:"Tu corazón vive donde está tu tesoro.",
+ preguntas:["¿Dónde está hoy mi tesoro?","¿Qué me preocupa más de lo que debería?"]},
+{fecha:"2026-11-09", ref:"1 Cor 3, 16", libro:"Primera carta de san Pablo a los Corintios",
+ texto:"¿No saben que ustedes son templo de Dios y que el Espíritu de Dios habita en ustedes?",
+ fiesta:"Dedicación de la Basílica de Letrán",
+ contexto:"Hoy la Iglesia celebra la catedral del Papa, en Roma. Pablo recuerda a los corintios, divididos en bandos, que la verdadera casa de Dios es la comunidad.",
+ ensenanza:"Los templos de piedra son signo de otro templo: cada bautizado, y la Iglesia entera, donde vive el Espíritu Santo.",
+ reflexion:"Cuidar el cuerpo, el descanso, las palabras y los pensamientos también es cuidar un templo.",
+ frase:"Sos casa de Dios.",
+ preguntas:["¿Trato mi cuerpo y mi vida como templo de Dios?","¿Qué necesita limpieza en ese templo?"]},
+{fecha:"2026-11-10", ref:"Mt 13, 31-32", libro:"Evangelio según san Mateo",
+ texto:"El Reino de los Cielos se parece a un grano de mostaza. Es la más pequeña de las semillas, pero cuando crece es la más grande de las hortalizas.",
+ contexto:"Jesús habla en parábolas junto al lago. Sus oyentes esperaban un Reino poderoso y espectacular.",
+ ensenanza:"Dios trabaja desde lo pequeño y oculto. El Reino crece despacio, sin ruido, pero crece.",
+ reflexion:"Una oración diaria, un gesto amable, cinco minutos con la Palabra: semillas chiquitas que Dios hace crecer.",
+ frase:"Lo pequeño en manos de Dios se vuelve grande.",
+ preguntas:["¿Qué semilla pequeña estoy sembrando?","¿Tengo paciencia con los tiempos de Dios?"]},
+{fecha:"2026-11-11", ref:"Lc 3, 11", libro:"Evangelio según san Lucas",
+ texto:"El que tenga dos túnicas, dé una al que no tiene; y el que tenga qué comer, haga otro tanto.",
+ fiesta:"San Martín de Tours, patrono de Buenos Aires",
+ contexto:"Juan el Bautista predica la conversión junto al Jordán y la gente le pregunta qué tiene que hacer. Su respuesta es muy concreta.",
+ ensenanza:"La conversión se nota en gestos. San Martín, soldado romano, cortó su capa para compartirla con un pobre; esa noche soñó con Jesús vestido con la mitad de su capa.",
+ reflexion:"Nuestra ciudad tiene como patrono a un hombre recordado por compartir su abrigo. Todos tenemos alguna \"segunda túnica\".",
+ frase:"Compartir la mitad también es dar todo el corazón.",
+ preguntas:["¿Cuál es mi \"segunda túnica\"?","¿Con quién puedo compartirla esta semana?"]},
+{fecha:"2026-11-12", ref:"Mt 13, 45-46", libro:"Evangelio según san Mateo",
+ texto:"El Reino de los Cielos se parece a un negociante que se dedicaba a buscar perlas finas; y al encontrar una de gran valor, fue a vender todo lo que tenía y la compró.",
+ contexto:"Es una de las parábolas cortas del capítulo 13 de Mateo, junto a la del tesoro escondido en el campo.",
+ ensenanza:"Encontrar a Dios es encontrar lo que da valor a todo lo demás. El negociante no vende con tristeza: vende con la alegría de haber encontrado.",
+ reflexion:"No se trata de perder cosas, sino de ganar lo más valioso.",
+ frase:"Quien encuentra a Dios no pierde nada.",
+ preguntas:["¿Qué es para mí la \"perla\" de mi vida?","¿Qué estaría dispuesta a dejar por ella?"]},
+{fecha:"2026-11-13", ref:"Mt 13, 8", libro:"Evangelio según san Mateo",
+ texto:"Otras semillas cayeron en tierra buena y dieron fruto: unas cien, otras sesenta, otras treinta.",
+ contexto:"En la parábola del sembrador, la semilla cae en el camino, entre piedras, entre espinas y en tierra buena. Jesús explica que la semilla es la Palabra.",
+ ensenanza:"La semilla siempre es buena: lo que cambia es la tierra. Las espinas son las preocupaciones y la seducción de la riqueza.",
+ reflexion:"Estos días de lectura son siembra. Vale preguntarse qué tipo de tierra le ofrezco a la Palabra.",
+ frase:"La Palabra ya fue sembrada; cuidá la tierra.",
+ preguntas:["¿Qué \"espinas\" ahogan la Palabra en mí?","¿Qué fruto está dando esta oración diaria?"]},
+{fecha:"2026-11-14", ref:"Jn 10, 10", libro:"Evangelio según san Juan",
+ texto:"Yo he venido para que las ovejas tengan Vida, y la tengan en abundancia.",
+ contexto:"Jesús se presenta como el buen Pastor y la puerta de las ovejas, en contraste con los ladrones que vienen a robar y destruir.",
+ ensenanza:"Dios no quiere una vida mediocre ni apagada para nosotros. La fe no achica la vida: la llena.",
+ reflexion:"Vida en abundancia no es tener mucho, sino vivir con sentido, con amor, con alegría honda.",
+ frase:"Dios no vino a quitarte vida, vino a dártela entera.",
+ preguntas:["¿En qué parte de mi vida siento que me falta vida?","¿Qué me está robando la alegría?"]},
+{fecha:"2026-11-15", ref:"Mt 25, 21", libro:"Evangelio según san Mateo",
+ texto:"Está bien, servidor bueno y fiel; ya que respondiste fielmente en lo poco, te encargaré de mucho más: entra a participar del gozo de tu señor.",
+ contexto:"En la parábola de los talentos, un señor reparte su fortuna entre sus servidores antes de viajar. Dos la hacen producir; el tercero, por miedo, la entierra.",
+ ensenanza:"Dios confía dones a cada uno según su capacidad. Lo que reprocha no es el poco resultado, sino el miedo que paraliza.",
+ reflexion:"Tus talentos no son solo habilidades: también tu tiempo, tu organización, tu forma de cuidar a otros.",
+ frase:"Dios no te pide que ganes, te pide que no entierres.",
+ preguntas:["¿Qué talento recibí de Dios?","¿Estoy enterrando alguno por miedo?"]},
+{fecha:"2026-11-16", ref:"Gn 1, 27.31", libro:"Libro del Génesis",
+ texto:"Dios creó al hombre a su imagen; lo creó a imagen de Dios, los creó varón y mujer. Y Dios vio que todo lo que había hecho era muy bueno.",
+ contexto:"Es el primer relato de la creación, escrito como un poema de siete días. Después de cada obra Dios dice que \"es bueno\"; al crear al ser humano dice \"muy bueno\".",
+ ensenanza:"Somos imagen de Dios: capaces de amar, crear, pensar y elegir. Esa dignidad está en toda persona.",
+ reflexion:"Antes de cualquier error o herida, la primera palabra de Dios sobre vos fue \"muy bueno\".",
+ frase:"La primera palabra de Dios sobre vos fue \"muy bueno\".",
+ preguntas:["¿Veo la imagen de Dios en las personas difíciles?","¿Creo que Dios me mira y dice \"muy bueno\"?"]},
+{fecha:"2026-11-17", ref:"Gn 12, 1", libro:"Libro del Génesis",
+ texto:"El Señor dijo a Abram: \"Deja tu tierra natal y la casa de tu padre, y ve al país que yo te mostraré\".",
+ contexto:"Abram vivía en Harán con su familia y ya era mayor. Dios lo llama a salir hacia una tierra desconocida y le promete una descendencia numerosa.",
+ ensenanza:"Abraham es el padre de la fe: se pone en camino sin ver el destino, solo con la promesa. Creer es confiar en quien llama.",
+ reflexion:"Dios suele pedir el primer paso antes de mostrar el mapa.",
+ frase:"La fe es caminar sin mapa, de la mano de Dios.",
+ preguntas:["¿Hacia dónde siento que Dios me está llamando?","¿Qué \"tierra\" me cuesta dejar?"]},
+{fecha:"2026-11-18", ref:"Ex 3, 14", libro:"Libro del Éxodo",
+ texto:"Dios dijo a Moisés: \"Yo soy el que soy\". Luego añadió: \"Tú hablarás así a los israelitas: 'Yo soy' me envió a ustedes\".",
+ contexto:"Moisés, que huyó de Egipto, pastorea ovejas en el desierto. Ve una zarza que arde sin consumirse y Dios lo llama para liberar a su pueblo esclavo.",
+ ensenanza:"Dios revela su nombre: el que es, el que está presente. Jesús usará ese mismo \"Yo soy\" para hablar de sí mismo.",
+ reflexion:"Dios escuchó el clamor de su pueblo antes de llamar a Moisés. No es indiferente al sufrimiento.",
+ frase:"Dios es el que está.",
+ preguntas:["¿Cuál es mi \"zarza ardiente\", el lugar donde Dios me habla?","¿Qué clamor de otros escucho yo?"]},
+{fecha:"2026-11-19", ref:"Rut 1, 16", libro:"Libro de Rut",
+ texto:"Adonde tú vayas, iré yo, y donde tú vivas, viviré yo. Tu pueblo será mi pueblo, y tu Dios será mi Dios.",
+ contexto:"Noemí quedó viuda y perdió a sus dos hijos. Decide volver a Belén y les dice a sus nueras extranjeras que se queden en su tierra. Rut, moabita, se niega a dejarla sola.",
+ ensenanza:"La fidelidad de Rut es tan grande que Dios la vuelve bisabuela del rey David y antepasada de Jesús. Una extranjera entra en la historia de la salvación.",
+ reflexion:"Acompañar a alguien en su peor momento es una forma muy concreta de amor.",
+ frase:"Quedarse al lado también es rezar.",
+ preguntas:["¿A quién necesito acompañar ahora?","¿Quién fue \"Rut\" para mí?"]},
+{fecha:"2026-11-20", ref:"Sal 27 (26), 1", libro:"Libro de los Salmos",
+ texto:"El Señor es mi luz y mi salvación, ¿a quién temeré? El Señor es el baluarte de mi vida, ¿ante quién temblaré?",
+ contexto:"Es un salmo de confianza en medio de enemigos y amenazas. El salmista pide una sola cosa: habitar en la casa del Señor todos los días.",
+ ensenanza:"Cuando Dios es la luz, el miedo pierde fuerza. La confianza no niega los peligros, los pone en perspectiva.",
+ reflexion:"Poné nombre a lo que te da miedo, y después repetí este versículo frente a cada cosa.",
+ frase:"Con Dios como luz, las sombras pierden tamaño.",
+ preguntas:["¿Qué me hace temblar hoy?","¿Qué cambia si Dios es mi baluarte?"]},
+{fecha:"2026-11-21", ref:"Lc 21, 3-4", libro:"Evangelio según san Lucas",
+ texto:"Esta pobre viuda ha dado más que nadie. Porque todos los demás dieron como ofrenda algo de lo que les sobraba, pero ella, de su indigencia, dio todo lo que tenía para vivir.",
+ fiesta:"Presentación de la Virgen María",
+ contexto:"Jesús observa en el Templo a los ricos que depositan grandes ofrendas, y a una viuda pobre que pone dos pequeñas monedas de cobre.",
+ ensenanza:"Dios mira el corazón, no la cantidad. Hoy recordamos a María, ofrecida a Dios desde niña según la tradición: ella también lo dio todo.",
+ reflexion:"Lo que ofrecés desde tu pobreza, tu cansancio o tu poco tiempo vale mucho para Dios.",
+ frase:"Para Dios no cuenta cuánto das, sino cuánto de vos ponés.",
+ preguntas:["¿Doy a Dios de lo que me sobra o de lo que soy?","¿Qué \"dos moneditas\" puedo ofrecer hoy?"]},
+{fecha:"2026-11-22", ref:"Lc 23, 42-43", libro:"Evangelio según san Lucas",
+ texto:"\"Jesús, acuérdate de mí cuando vengas a establecer tu Reino\". Él le respondió: \"Yo te aseguro que hoy estarás conmigo en el Paraíso\".",
+ fiesta:"Jesucristo, Rey del Universo",
+ contexto:"Jesús está crucificado entre dos malhechores. Uno lo insulta; el otro reconoce su propia culpa y le pide a Jesús que lo recuerde.",
+ ensenanza:"Cristo reina desde la cruz, perdonando. Su Reino no es de poder sino de amor, y está abierto hasta el último momento.",
+ reflexion:"El buen ladrón no tenía nada para ofrecer, solo un pedido humilde. Fue suficiente.",
+ frase:"Nunca es tarde para decir \"acuérdate de mí\".",
+ preguntas:["¿Cristo reina de verdad en mi vida?","¿Qué le pido hoy, con la humildad del buen ladrón?"]},
+{fecha:"2026-11-23", ref:"Miq 6, 8", libro:"Libro de Miqueas",
+ texto:"Se te ha indicado, hombre, qué es lo bueno y qué exige de ti el Señor: nada más que practicar la equidad, amar la fidelidad y caminar humildemente con tu Dios.",
+ contexto:"El profeta Miqueas denuncia a un pueblo que ofrecía sacrificios en el Templo pero oprimía a los pobres. El pueblo pregunta qué ofrenda agradaría a Dios.",
+ ensenanza:"Dios no quiere ritos vacíos: quiere justicia, fidelidad y humildad. La fe se vive en el trato con los demás.",
+ reflexion:"Tres verbos para cualquier día: hacer lo justo, ser fiel, caminar humilde.",
+ frase:"Lo que Dios pide cabe en tres verbos.",
+ preguntas:["¿Dónde puedo practicar la justicia hoy, en el trabajo o en casa?","¿Camino humildemente, o quiero ir adelante de Dios?"]},
+{fecha:"2026-11-24", ref:"Jer 18, 6", libro:"Libro de Jeremías",
+ texto:"Como la arcilla en la mano del alfarero, así están ustedes en mi mano.",
+ contexto:"Dios manda al profeta Jeremías a la casa de un alfarero. Allí ve que, cuando una vasija sale mal, el alfarero no tira el barro: lo vuelve a trabajar.",
+ ensenanza:"Dios no se da por vencido con nosotros. Nos rehace con paciencia, aunque algo se haya torcido.",
+ reflexion:"Dejarse moldear cuesta: implica soltar la forma que uno eligió.",
+ frase:"En las manos de Dios, lo que se rompe se vuelve a formar.",
+ preguntas:["¿Qué área de mi vida necesita ser rehecha?","¿Me dejo moldear o me resisto?"]},
+{fecha:"2026-11-25", ref:"Os 11, 4", libro:"Libro de Oseas",
+ texto:"Yo los atraía con lazos humanos, con ataduras de amor; era para ellos como los que alzan a un niño contra su mejilla.",
+ contexto:"Oseas habla de la infidelidad de Israel. Pero en vez de un castigo, Dios describe su ternura, como la de un padre o una madre que enseña a caminar a su hijo.",
+ ensenanza:"Es una de las imágenes más tiernas de Dios en el Antiguo Testamento. Su amor es paciente y maternal.",
+ reflexion:"Imaginá a Dios alzándote contra su mejilla. Así te mira.",
+ frase:"Dios te alza con ternura, no con reproche.",
+ preguntas:["¿Me cuesta dejarme querer por Dios?","¿Con quién puedo tener un gesto de ternura hoy?"]},
+{fecha:"2026-11-26", ref:"Ecl 3, 1", libro:"Libro del Eclesiastés",
+ texto:"Hay un momento para todo y un tiempo para cada cosa bajo el sol.",
+ contexto:"El Eclesiastés (Qohélet) es un libro sapiencial que reflexiona sobre el sentido de la vida. Enumera tiempos: nacer y morir, llorar y reír, callar y hablar.",
+ ensenanza:"La vida tiene estaciones. La sabiduría es reconocer qué tiempo estamos viviendo y confiar en que Dios lo abarca todo.",
+ reflexion:"Se acerca el fin de año, con su cansancio. Tal vez sea tiempo de bajar un cambio.",
+ frase:"No todo es para hoy; Dios sabe los tiempos.",
+ preguntas:["¿Qué tiempo estoy viviendo: de sembrar, de esperar, de soltar?","¿Qué me está pidiendo este momento?"]},
+{fecha:"2026-11-27", ref:"Prov 3, 5-6", libro:"Libro de los Proverbios",
+ texto:"Confía en el Señor de todo corazón y no te fíes de tu propia inteligencia; reconócelo en todos tus caminos, y él allanará tus senderos.",
+ fiesta:"Nuestra Señora de la Medalla Milagrosa",
+ contexto:"Los Proverbios son consejos de un maestro a su discípulo, llamado \"hijo mío\". Hablan de sabiduría práctica para la vida diaria.",
+ ensenanza:"La inteligencia es un don, pero no alcanza sola. Reconocer a Dios en cada camino es la verdadera sabiduría.",
+ reflexion:"Para quienes organizan, planifican y resuelven todo, este versículo es un descanso: no todo depende de vos.",
+ frase:"Planificá con cabeza, confiá con el corazón.",
+ preguntas:["¿En qué decisión me estoy apoyando solo en mi cabeza?","¿Cómo puedo reconocer a Dios en mi trabajo?"]},
+{fecha:"2026-11-28", ref:"1 Tes 5, 16-18", libro:"Primera carta de san Pablo a los Tesalonicenses",
+ texto:"Estén siempre alegres. Oren sin cesar. Den gracias a Dios en toda ocasión: esto es lo que Dios quiere de todos ustedes, en Cristo Jesús.",
+ contexto:"Es probablemente el escrito más antiguo del Nuevo Testamento. Pablo cierra su carta a una comunidad joven con consejos breves.",
+ ensenanza:"Alegría, oración y gratitud van juntas. Orar sin cesar es vivir con Dios presente en todo lo que hacemos.",
+ reflexion:"Mañana empieza el Adviento. Hoy es buen día para agradecer el año litúrgico que termina.",
+ frase:"La gratitud abre la puerta a la alegría.",
+ preguntas:["¿Por qué tres cosas de este año puedo dar gracias?","¿Cómo puedo \"orar sin cesar\" en medio del trabajo?"]},
+{fecha:"2026-11-29", ref:"Mt 24, 42", libro:"Evangelio según san Mateo",
+ texto:"Estén prevenidos, porque ustedes no saben qué día vendrá su Señor.",
+ fiesta:"I Domingo de Adviento",
+ contexto:"Empieza el Adviento y un nuevo año litúrgico. Jesús habla de su venida al final de los tiempos y compara la distracción de la gente con la época de Noé.",
+ ensenanza:"El Adviento prepara dos venidas: la memoria de Belén y la venida final de Cristo. Estar prevenido es vivir despierto, con el corazón atento.",
+ reflexion:"Diciembre suele llenarse de corridas. El Adviento propone lo contrario: esperar con calma y atención.",
+ frase:"Adviento: despertar el corazón para recibir a Jesús.",
+ preguntas:["¿Cómo quiero vivir este Adviento?","¿Qué me tiene dormida espiritualmente?"]},
+{fecha:"2026-11-30", ref:"Mt 4, 19-20", libro:"Evangelio según san Mateo",
+ texto:"\"Síganme, y yo los haré pescadores de hombres\". Inmediatamente, ellos dejaron las redes y lo siguieron.",
+ fiesta:"San Andrés, apóstol",
+ contexto:"Jesús camina junto al mar de Galilea y ve a los hermanos Simón y Andrés echando las redes. Los llama en medio de su trabajo.",
+ ensenanza:"Jesús llama en lo cotidiano y transforma el oficio en misión. Andrés fue quien llevó a su hermano Pedro a Jesús.",
+ reflexion:"No hace falta dejar tu trabajo para seguir a Jesús: Él puede transformar tus \"redes\" de todos los días.",
+ frase:"Jesús te llama en medio de tus redes.",
+ preguntas:["¿A quién puedo acercar a Jesús, como Andrés a su hermano?","¿Qué \"red\" necesito soltar para seguirlo?"]}
+];
+
+const PLAN_DIC = [
+{fecha:"2026-12-01", ref:"Is 2, 5", libro:"Libro de Isaías",
+ texto:"¡Ven, casa de Jacob, y caminemos a la luz del Señor!",
+ contexto:"Isaías ve a todos los pueblos subiendo al monte del Señor para aprender sus caminos, y a las naciones transformando las espadas en arados. Es una visión de paz universal.",
+ ensenanza:"El Adviento es un camino hacia la luz. Dios quiere reunir a todos los pueblos en su paz, y esa paz empieza en cada corazón.",
+ reflexion:"\"Caminemos\", en plural: nadie llega solo a la luz.",
+ frase:"En Adviento se camina hacia la luz, y se camina juntos.",
+ preguntas:["¿Qué \"espada\" en mi vida necesita volverse arado?","¿Con quién quiero caminar este Adviento?"]},
+{fecha:"2026-12-02", ref:"Is 11, 1-2", libro:"Libro de Isaías",
+ texto:"Saldrá una rama del tronco de Jesé y un retoño brotará de sus raíces. Sobre él reposará el espíritu del Señor.",
+ contexto:"Jesé era el padre del rey David. Cuando Isaías escribe, la dinastía de David parece un tronco cortado. El profeta anuncia que de ese tronco saldrá un brote nuevo.",
+ ensenanza:"La Iglesia ve en este retoño a Jesús, descendiente de David, lleno de los siete dones del Espíritu. Dios hace brotar vida de lo que parecía muerto.",
+ reflexion:"Tal vez hay algo en tu vida que parece un tronco seco. Dios sabe hacer brotar retoños ahí.",
+ frase:"Donde ves un tronco cortado, Dios ve un brote.",
+ preguntas:["¿Qué parece seco en mi vida?","¿Qué don del Espíritu necesito pedir hoy?"]},
+{fecha:"2026-12-03", ref:"Is 25, 8", libro:"Libro de Isaías",
+ texto:"Destruirá la Muerte para siempre; el Señor enjugará las lágrimas de todos los rostros.",
+ fiesta:"San Francisco Javier",
+ contexto:"Isaías describe un gran banquete que Dios prepara en su monte para todos los pueblos, con manjares y vinos, donde se quita el velo de luto que cubre a las naciones.",
+ ensenanza:"Es una promesa de consuelo definitivo. Dios no pasa de largo ante las lágrimas: las seca una por una, con sus propias manos.",
+ reflexion:"Llevale hoy a Dios una lágrima concreta, tuya o de alguien que quieras.",
+ frase:"Dios conoce cada una de tus lágrimas.",
+ preguntas:["¿Qué lágrima quiero poner en manos de Dios?","¿A quién puedo consolar yo?"]},
+{fecha:"2026-12-04", ref:"Mt 9, 28-29", libro:"Evangelio según san Mateo",
+ texto:"Jesús les preguntó: \"¿Creen que yo puedo hacer lo que me piden?\". Ellos le respondieron: \"Sí, Señor\". Jesús les tocó los ojos y dijo: \"Que suceda como ustedes han creído\".",
+ contexto:"Dos ciegos siguen a Jesús gritando \"¡Ten piedad de nosotros, Hijo de David!\". Entran con Él en la casa, donde Jesús les hace esta pregunta.",
+ ensenanza:"Jesús quiere nuestra fe explícita. Su pregunta no es para humillar, sino para que los ciegos se descubran confiando.",
+ reflexion:"Una respuesta breve, \"Sí, Señor\", puede ser la oración más completa del día.",
+ frase:"\"Sí, Señor\": dos palabras que abren los ojos.",
+ preguntas:["¿Creo que Jesús puede hacer lo que le pido?","¿Qué me impide decirle \"sí, Señor\"?"]},
+{fecha:"2026-12-05", ref:"Mt 9, 36", libro:"Evangelio según san Mateo",
+ texto:"Al ver a la multitud, tuvo compasión de ella, porque estaban fatigados y abatidos, como ovejas que no tienen pastor.",
+ contexto:"Jesús recorre ciudades y pueblos enseñando y sanando. Al ver a la gente, siente compasión y pide a sus discípulos que rueguen por más trabajadores para la cosecha.",
+ ensenanza:"La palabra griega para \"compasión\" habla de entrañas que se conmueven. Jesús no mira a la multitud como una masa: ve personas cansadas.",
+ reflexion:"En la calle, en el trabajo, en el colectivo: hay gente fatigada. Mirarlos con los ojos de Jesús ya es empezar a ayudar.",
+ frase:"Mirá con los ojos de Jesús: detrás de cada cara hay un cansancio.",
+ preguntas:["¿A quién veo cansado o abatido cerca mío?","¿Cómo puedo ser pastor para alguien?"]},
+{fecha:"2026-12-06", ref:"Mt 3, 3", libro:"Evangelio según san Mateo",
+ texto:"Una voz grita en el desierto: preparen el camino del Señor, allanen sus senderos.",
+ fiesta:"II Domingo de Adviento",
+ contexto:"Juan el Bautista aparece en el desierto de Judea, vestido con piel de camello, predicando la conversión. Mateo aplica a él esta profecía de Isaías.",
+ ensenanza:"Preparar el camino es quitar obstáculos: orgullo, rencores, distracciones. Juan no se anuncia a sí mismo: señala al que viene detrás.",
+ reflexion:"Cada Adviento es una invitación a hacer una limpieza interior para recibir a Jesús.",
+ frase:"Allaná el camino: Jesús quiere llegar a vos.",
+ preguntas:["¿Qué obstáculo tengo que sacar del camino?","¿Me estoy preparando para Navidad o solo para las fiestas?"]},
+{fecha:"2026-12-07", ref:"Is 35, 4", libro:"Libro de Isaías",
+ texto:"Digan a los que están desalentados: \"¡Sean fuertes, no teman: ahí está su Dios! Él mismo viene a salvarlos\".",
+ contexto:"Isaías anuncia que el desierto florecerá, que los ciegos verán y los cojos saltarán. Es un canto de esperanza para el pueblo que vuelve del exilio.",
+ ensenanza:"Dios viene en persona. El Adviento anuncia que Dios no manda un mensajero: viene Él mismo, en Jesús.",
+ reflexion:"Quizás alguien cerca tuyo está desalentado. Hoy podés ser la voz que dice \"no temas\".",
+ frase:"Ahí está tu Dios: viene a salvarte.",
+ preguntas:["¿Qué desánimo cargo en este fin de año?","¿A quién puedo darle ánimo hoy?"]},
+{fecha:"2026-12-08", ref:"Lc 1, 28", libro:"Evangelio según san Lucas",
+ texto:"El Ángel entró en su casa y la saludó, diciendo: \"¡Alégrate, llena de gracia, el Señor está contigo!\".",
+ fiesta:"Inmaculada Concepción de la Virgen María",
+ contexto:"Es el saludo del ángel Gabriel a María en Nazaret. El ángel no la llama por su nombre sino \"llena de gracia\", como si fuera su nombre verdadero.",
+ ensenanza:"La Iglesia celebra hoy que María fue preservada del pecado original desde su concepción, para ser la madre de Jesús. Todo en ella es gracia, don de Dios.",
+ reflexion:"El primer mensaje de Dios a María fue \"alégrate\". También es el primero para vos.",
+ frase:"La gracia de Dios llega primero: la alegría viene después.",
+ preguntas:["¿Qué gracia de Dios puedo reconocer en mi vida?","¿Cómo le pido a María que me ayude a decir sí?"]},
+{fecha:"2026-12-09", ref:"Is 40, 31", libro:"Libro de Isaías",
+ texto:"Los que esperan en el Señor renuevan sus fuerzas, despliegan alas como las águilas; corren y no se agotan, avanzan y no se fatigan.",
+ contexto:"El pueblo en el exilio se siente olvidado y agotado. Isaías recuerda que Dios no se cansa y da fuerza al que está cansado.",
+ ensenanza:"Esperar en Dios no es quedarse quieto: es apoyarse en su fuerza. Él renueva lo que nosotros ya no podemos sostener.",
+ reflexion:"Diciembre cansa: cierres, balances, reuniones, fiestas. Este versículo es para este momento.",
+ frase:"Cuando se terminan tus fuerzas, empiezan las de Dios.",
+ preguntas:["¿Dónde siento el cansancio hoy?","¿Cómo puedo apoyarme más en Dios y menos en mí?"]},
+{fecha:"2026-12-10", ref:"Is 48, 17-18", libro:"Libro de Isaías",
+ texto:"Yo soy el Señor, tu Dios, el que te instruye para tu provecho, el que te guía por el camino que debes seguir. ¡Si hubieras atendido a mis mandamientos! Tu paz sería como un río.",
+ contexto:"Dios habla a su pueblo como un maestro que lamenta que no lo hayan escuchado. No hay enojo, hay tristeza de padre.",
+ ensenanza:"Los mandamientos no son una carga: son el camino de la paz. Dios enseña para nuestro bien.",
+ reflexion:"Una paz \"como un río\": que fluye, que no se corta. Así es la paz que nace de vivir según Dios.",
+ frase:"Escuchar a Dios es encontrar paz como un río.",
+ preguntas:["¿En qué aspecto no estoy escuchando a Dios?","¿Qué me daría esa paz que fluye?"]},
+{fecha:"2026-12-11", ref:"Sal 145 (144), 8-9", libro:"Libro de los Salmos",
+ texto:"El Señor es bondadoso y compasivo, lento para enojarse y de gran misericordia; el Señor es bueno con todos y tiene compasión de todas sus criaturas.",
+ contexto:"Es un salmo de alabanza que recorre las letras del alfabeto hebreo, como un abecedario de las bondades de Dios.",
+ ensenanza:"Esta descripción de Dios aparece muchas veces en la Biblia, desde el Éxodo. Es como su tarjeta de presentación.",
+ reflexion:"Si a Dios le cuesta enojarse, quizás a nosotros también nos toque ser más lentos para enojarnos.",
+ frase:"Dios es lento para enojarse y rápido para perdonar.",
+ preguntas:["¿Qué imagen de Dios tengo: la de este salmo, o una más dura?","¿Con quién puedo ser lenta para enojarme hoy?"]},
+{fecha:"2026-12-12", ref:"Lc 1, 45", libro:"Evangelio según san Lucas",
+ texto:"Feliz de ti por haber creído que se cumplirá lo que te fue anunciado de parte del Señor.",
+ fiesta:"Nuestra Señora de Guadalupe, patrona de América",
+ contexto:"Isabel, llena del Espíritu Santo, recibe a María con estas palabras. Es la primera bienaventuranza del Evangelio de Lucas, y es para María.",
+ ensenanza:"María es feliz porque creyó. En 1531 se apareció en México a Juan Diego, un indígena sencillo, y hoy es patrona de toda América.",
+ reflexion:"La Virgen de Guadalupe le dijo a Juan Diego: \"¿No estoy yo aquí, que soy tu madre?\". Esa frase es también para vos.",
+ frase:"¿No estoy yo aquí, que soy tu madre?",
+ preguntas:["¿En qué necesito creer como María?","¿Qué le quiero confiar hoy a la Virgen?"]},
+{fecha:"2026-12-13", ref:"Flp 4, 4-5", libro:"Carta de san Pablo a los Filipenses",
+ texto:"Alégrense siempre en el Señor. Vuelvo a insistir, alégrense. Que la bondad de ustedes sea conocida por todos los hombres. El Señor está cerca.",
+ fiesta:"III Domingo de Adviento · Gaudete",
+ contexto:"Pablo escribe desde la cárcel, y aun así insiste en la alegría. La Iglesia toma estas palabras para el tercer domingo de Adviento, llamado Gaudete: \"alégrense\".",
+ ensenanza:"La alegría cristiana tiene un motivo: el Señor está cerca. Hoy la vela de la corona es rosa, signo de esa alegría a mitad del camino.",
+ reflexion:"La alegría no depende de que todo esté bien, sino de quién viene.",
+ frase:"Alegrate: el Señor está cerca.",
+ preguntas:["¿Qué me roba la alegría en esta época?","¿Cómo puede notarse hoy mi bondad?"]},
+{fecha:"2026-12-14", ref:"Mt 11, 3", libro:"Evangelio según san Mateo",
+ texto:"\"¿Eres tú el que ha de venir o debemos esperar a otro?\".",
+ fiesta:"San Juan de la Cruz",
+ contexto:"Juan el Bautista está preso por Herodes. Desde la cárcel, con dudas, manda a sus discípulos a preguntarle a Jesús si es de verdad el Mesías.",
+ ensenanza:"Jesús no lo reta: responde mostrando sus obras. Los ciegos ven, los pobres reciben la Buena Noticia. Hasta los más grandes creyentes tienen noches de duda.",
+ reflexion:"San Juan de la Cruz, que hoy celebramos, escribió sobre la \"noche oscura\" del alma: la fe también se fortalece en la oscuridad.",
+ frase:"La duda honesta, llevada a Jesús, se vuelve camino.",
+ preguntas:["¿Qué duda quiero llevarle a Jesús?","¿Qué \"obras\" de Dios veo a mi alrededor?"]},
+{fecha:"2026-12-15", ref:"Sant 5, 7-8", libro:"Carta de Santiago",
+ texto:"Tengan paciencia hasta que llegue el Señor. Miren cómo el sembrador espera el fruto precioso de la tierra. Tengan paciencia y anímense, porque la venida del Señor está próxima.",
+ contexto:"Santiago escribe a cristianos que sufrían injusticias y se impacientaban esperando la venida de Cristo.",
+ ensenanza:"La paciencia es una virtud del Adviento. El sembrador no puede apurar la cosecha, pero sabe que llega.",
+ reflexion:"Algunas cosas que pedimos a Dios tienen tiempo de siembra. Él no llega tarde.",
+ frase:"La paciencia es fe que sabe esperar.",
+ preguntas:["¿Qué estoy esperando con impaciencia?","¿Qué sembré este año que todavía no dio fruto?"]},
+{fecha:"2026-12-16", ref:"Sof 3, 17", libro:"Libro de Sofonías",
+ texto:"¡El Señor, tu Dios, está en medio de ti, es un guerrero victorioso! Él exulta de alegría a causa de ti, te renueva con su amor y lanza por ti gritos de alegría.",
+ contexto:"El profeta Sofonías anuncia a Jerusalén, llamada \"hija de Sión\", que Dios quitó su condena y viene a vivir en medio de ella.",
+ ensenanza:"Una imagen sorprendente: Dios canta y baila de alegría por su pueblo. No solo nosotros nos alegramos en Dios: Él se alegra por nosotros.",
+ reflexion:"Pensá que hoy Dios se alegra por vos. No por lo que hiciste, sino porque sos vos.",
+ frase:"Dios se alegra por vos.",
+ preguntas:["¿Me cuesta creer que Dios se alegra por mí?","¿Cómo cambiaría mi día si lo creyera?"]},
+{fecha:"2026-12-17", ref:"Mt 1, 16", libro:"Evangelio según san Mateo",
+ texto:"Jacob fue padre de José, el esposo de María, de la cual nació Jesús, que es llamado Cristo.",
+ contexto:"Hoy empiezan las ferias mayores de Adviento. El Evangelio de Mateo abre con la genealogía de Jesús: cuarenta y dos generaciones desde Abraham, con reyes, pecadores y extranjeras.",
+ ensenanza:"Jesús entra en una historia real, con luces y sombras. En su árbol hay santos y pecadores; Dios no se avergüenza de ninguna familia.",
+ reflexion:"Tu historia familiar, con lo que tiene de lindo y de difícil, también puede ser lugar donde Dios obra.",
+ frase:"Dios escribe su historia en familias como la tuya.",
+ preguntas:["¿Qué parte de la historia de mi familia quiero poner en manos de Dios?","¿Por quién de mi familia rezo hoy?"]},
+{fecha:"2026-12-18", ref:"Mt 1, 20-21", libro:"Evangelio según san Mateo",
+ texto:"José, hijo de David, no temas recibir a María, tu esposa, porque lo que fue engendrado en ella proviene del Espíritu Santo. Ella dará a luz un hijo, a quien pondrás el nombre de Jesús.",
+ contexto:"José se entera de que María está embarazada y, como era justo, decide separarse de ella en secreto para no exponerla. Un ángel le habla en sueños.",
+ ensenanza:"José no dice una sola palabra en los Evangelios: actúa. Cuida, protege, obedece. Es el santo del silencio fiel.",
+ reflexion:"José tuvo que cambiar sus planes de un día para otro. Confió y se hizo cargo.",
+ frase:"El amor fiel habla con hechos.",
+ preguntas:["¿Qué plan mío tengo que soltar para recibir el de Dios?","¿Cómo puedo cuidar a los míos como José?"]},
+{fecha:"2026-12-19", ref:"Lc 1, 13", libro:"Evangelio según san Lucas",
+ texto:"No temas, Zacarías; tu súplica ha sido escuchada. Isabel, tu esposa, te dará un hijo al que llamarás Juan.",
+ contexto:"Zacarías es un sacerdote anciano. Él e Isabel no tenían hijos y ya eran grandes. Mientras ofrece el incienso en el Templo, se le aparece un ángel.",
+ ensenanza:"Dios escuchó una oración que quizás ellos ya habían dejado de rezar. Juan significa \"Dios es misericordioso\".",
+ reflexion:"Hay oraciones que Dios guarda y responde a su tiempo. Ninguna súplica se pierde.",
+ frase:"Tu oración fue escuchada, aunque todavía no lo veas.",
+ preguntas:["¿Qué oración dejé de rezar porque me cansé de esperar?","¿Puedo volver a presentarla hoy?"]},
+{fecha:"2026-12-20", ref:"Mt 1, 23", libro:"Evangelio según san Mateo",
+ texto:"La Virgen concebirá y dará a luz un hijo a quien pondrán el nombre de Emanuel, que traducido significa: \"Dios con nosotros\".",
+ fiesta:"IV Domingo de Adviento",
+ contexto:"Mateo cita la profecía de Isaías (Is 7, 14) para mostrar que en Jesús se cumple la promesa de Dios a su pueblo.",
+ ensenanza:"Emanuel es el nombre que resume la Navidad: Dios no se queda lejos, se hace uno de nosotros para estar con nosotros.",
+ reflexion:"Faltan cinco días. En medio de las compras y los preparativos, este nombre es el centro de todo.",
+ frase:"Emanuel: Dios con nosotros, Dios con vos.",
+ preguntas:["¿Dónde necesito que Dios esté conmigo esta Navidad?","¿Cómo preparo mi casa interior para recibirlo?"]},
+{fecha:"2026-12-21", ref:"Lc 1, 41-42", libro:"Evangelio según san Lucas",
+ texto:"Apenas esta oyó el saludo de María, el niño saltó de alegría en su seno, e Isabel, llena del Espíritu Santo, exclamó: \"¡Tú eres bendita entre todas las mujeres y bendito es el fruto de tu vientre!\".",
+ contexto:"María, recién embarazada, viaja a las montañas de Judea para ayudar a su prima Isabel, que espera a Juan en su vejez.",
+ ensenanza:"Estas palabras de Isabel forman parte del Avemaría. Dos mujeres embarazadas se encuentran y la alegría de Dios se desborda.",
+ reflexion:"María no se quedó en su casa: salió a servir. La alegría de Dios se contagia en el encuentro.",
+ frase:"La alegría de Dios se contagia en el encuentro.",
+ preguntas:["¿A quién puedo visitar o llamar en estos días?","¿Rezo el Avemaría con atención a lo que digo?"]},
+{fecha:"2026-12-22", ref:"1 Sam 1, 27-28", libro:"Primer libro de Samuel",
+ texto:"Este es el niño por el que yo oraba, y el Señor me concedió lo que le pedía. Ahora yo, a mi vez, lo cedo al Señor.",
+ contexto:"Ana era estéril y sufría burlas. Rezó con tanto dolor en el santuario que el sacerdote creyó que estaba borracha. Dios le dio un hijo, Samuel, y ella lo consagró al Señor.",
+ ensenanza:"Ana anticipa a María: una mujer humilde que reza, recibe y devuelve a Dios lo que recibió. Todo lo que tenemos es don.",
+ reflexion:"Agradecer también es devolver: poner al servicio de Dios lo que Él nos dio.",
+ frase:"Lo que recibís de Dios, devolvelo con amor.",
+ preguntas:["¿Qué don pedido y recibido puedo agradecer hoy?","¿Qué le puedo devolver a Dios?"]},
+{fecha:"2026-12-23", ref:"Lc 1, 63-64", libro:"Evangelio según san Lucas",
+ texto:"Zacarías escribió: \"Su nombre es Juan\". Todos quedaron admirados. En ese mismo momento, su boca se abrió, su lengua se desató y comenzó a alabar a Dios.",
+ contexto:"Zacarías había quedado mudo por no creer al ángel. Al nacer el niño, los vecinos quieren llamarlo como su padre, pero él confirma el nombre que Dios eligió.",
+ ensenanza:"Al obedecer a Dios, Zacarías recupera la voz y la usa para alabar. La fe desata lo que la duda había atado.",
+ reflexion:"A veces necesitamos silencio para aprender a creer. Después, la alabanza sale sola.",
+ frase:"La fe desata la lengua para alabar.",
+ preguntas:["¿Qué me dejó \"mudo\" o sin palabras este año?","¿Por qué puedo alabar hoy a Dios?"]},
+{fecha:"2026-12-24", ref:"Is 9, 1.5", libro:"Libro de Isaías",
+ texto:"El pueblo que caminaba en las tinieblas ha visto una gran luz. Porque un niño nos ha nacido, un hijo nos ha sido dado.",
+ fiesta:"Nochebuena",
+ contexto:"Isaías escribe en tiempos de guerra y oscuridad, y anuncia el nacimiento de un niño con nombres admirables: Consejero maravilloso, Dios fuerte, Príncipe de la paz.",
+ ensenanza:"Es la primera lectura de la Misa de Nochebuena. La luz de Dios no llega como un ejército: llega como un niño.",
+ reflexion:"Esta noche, en medio del ruido de las fiestas, buscá un minuto de silencio para mirar el pesebre.",
+ frase:"Dios eligió llegar pequeño para que nadie le tenga miedo.",
+ preguntas:["¿Qué oscuridad quiero que ilumine esta Navidad?","¿Cómo puedo hacerle lugar a Jesús esta noche?"]},
+{fecha:"2026-12-25", ref:"Lc 2, 11-12", libro:"Evangelio según san Lucas",
+ texto:"Hoy, en la ciudad de David, les ha nacido un Salvador, que es el Mesías, el Señor. Y esto les servirá de señal: encontrarán a un niño recién nacido envuelto en pañales y acostado en un pesebre.",
+ fiesta:"Natividad del Señor",
+ contexto:"El ángel anuncia el nacimiento de Jesús a unos pastores que cuidaban sus rebaños de noche en los campos de Belén. Eran gente humilde y poco considerada.",
+ ensenanza:"La primera noticia de la Navidad es para los pobres. La señal de Dios es sorprendente: un bebé en un comedero de animales.",
+ reflexion:"¡Feliz Navidad! Dios se hizo niño. No hay lugar ni vida demasiado pobre para que Él quiera nacer ahí.",
+ frase:"Hoy nace el Salvador, también en tu pesebre.",
+ preguntas:["¿Qué \"pesebre\" de mi vida quiero ofrecerle?","¿Cómo vivo la Navidad con sencillez?"]},
+{fecha:"2026-12-26", ref:"Hch 7, 59-60", libro:"Hechos de los Apóstoles",
+ texto:"Mientras lo apedreaban, Esteban oraba, diciendo: \"Señor Jesús, recibe mi espíritu\". Después, poniéndose de rodillas, exclamó en voz alta: \"Señor, no les tengas en cuenta este pecado\".",
+ fiesta:"San Esteban, primer mártir",
+ contexto:"Esteban era uno de los siete diáconos elegidos para servir a los pobres de la primera comunidad. Fue apedreado por anunciar a Jesús; entre los presentes estaba Saulo, el futuro san Pablo.",
+ ensenanza:"Esteban muere como Jesús: perdonando. La Iglesia pone esta fiesta al día siguiente de Navidad para mostrar que el Niño de Belén pide todo el corazón.",
+ reflexion:"El perdón de Esteban fue semilla: Saulo, que miraba, terminó siendo apóstol.",
+ frase:"El perdón es la semilla más fuerte.",
+ preguntas:["¿Tengo alguien a quien perdonar para empezar bien el año?","¿Mi fe me costaría algo si la viviera en serio?"]},
+{fecha:"2026-12-27", ref:"Lc 2, 51-52", libro:"Evangelio según san Lucas",
+ texto:"Jesús regresó con sus padres a Nazaret y vivía sujeto a ellos. Su madre conservaba estas cosas en su corazón. Jesús crecía en sabiduría, en estatura y en gracia delante de Dios y de los hombres.",
+ fiesta:"Sagrada Familia de Jesús, María y José",
+ contexto:"Después de que Jesús, con doce años, se quedara en el Templo y sus padres lo buscaran angustiados durante tres días, vuelven todos a Nazaret.",
+ ensenanza:"Jesús vivió treinta años en una familia común, trabajando y creciendo. La vida de todos los días en familia es santa.",
+ reflexion:"La Sagrada Familia también tuvo angustias, viajes y cosas que no entendía. No era una familia sin problemas, sino con Dios en el centro.",
+ frase:"La santidad también se cocina en casa.",
+ preguntas:["¿Qué necesita mi familia hoy?","¿Cómo puedo poner a Dios en el centro de mi casa?"]},
+{fecha:"2026-12-28", ref:"Mt 2, 13-14", libro:"Evangelio según san Mateo",
+ texto:"\"Levántate, toma al niño y a su madre, huye a Egipto y permanece allí hasta que yo te avise\". José se levantó, tomó de noche al niño y a su madre, y se fue a Egipto.",
+ fiesta:"Santos Inocentes",
+ contexto:"Herodes, temiendo perder el poder, manda matar a los niños de Belén. Advertido en sueños, José huye con María y Jesús a Egipto como refugiados.",
+ ensenanza:"Hoy la Iglesia recuerda a los niños inocentes asesinados, y en ellos a todos los inocentes que sufren. Jesús mismo fue un niño perseguido y migrante.",
+ reflexion:"José actuó de noche, sin demorar. A veces proteger a los que amamos exige decisiones rápidas y valientes.",
+ frase:"Dios cuida a los suyos a través de manos como las de José.",
+ preguntas:["¿Por qué inocentes que sufren quiero rezar hoy?","¿A quién me toca proteger?"]},
+{fecha:"2026-12-29", ref:"Lc 2, 19", libro:"Evangelio según san Lucas",
+ texto:"María conservaba estas cosas y las meditaba en su corazón.",
+ contexto:"Después de la visita de los pastores, que cuentan lo que el ángel les dijo del niño, todos se asombran. María, en cambio, guarda y medita.",
+ ensenanza:"María es modelo de oración: recibe lo que pasa, lo guarda y lo medita, aunque no lo entienda todo. Es exactamente lo que hacemos al leer la Palabra cada día.",
+ reflexion:"Estamos cerrando el año. Es buen momento para \"guardar en el corazón\" lo vivido, lo lindo y lo difícil.",
+ frase:"Guardá lo vivido en el corazón, como María.",
+ preguntas:["¿Qué momento de este año quiero guardar en el corazón?","¿Qué cosa todavía no entiendo y le dejo a Dios?"]},
+{fecha:"2026-12-30", ref:"Jn 1, 14", libro:"Evangelio según san Juan",
+ texto:"Y la Palabra se hizo carne y habitó entre nosotros. Y nosotros hemos visto su gloria.",
+ contexto:"Es el prólogo del Evangelio de Juan, un himno que empieza \"Al principio existía la Palabra\". Es el Evangelio de la Misa del día de Navidad.",
+ ensenanza:"Dios no solo habló: se hizo carne. La Palabra que leímos todos estos días tiene rostro: Jesús.",
+ reflexion:"Estos meses leíste la Palabra cada día. Esa Palabra quiere hacerse carne en tu vida: en tus gestos, decisiones y vínculos.",
+ frase:"La Palabra que leés quiere vivir en vos.",
+ preguntas:["¿Qué Palabra de estos meses se hizo vida en mí?","¿Qué quiero seguir leyendo el año que viene?"]}
+];
+
+const MISTERIOS = {
+ gozosos:{nombre:"Misterios Gozosos", dias:"lunes y sábado", lista:[
+  {t:"La Anunciación del ángel a María", ref:"Lc 1, 26-38", fruto:"Humildad", med:"María escucha, pregunta y dice sí. Pidamos un corazón disponible a lo que Dios nos proponga."},
+  {t:"La Visitación de María a su prima Isabel", ref:"Lc 1, 39-56", fruto:"Amor al prójimo", med:"María sale sin demora a servir. Pidamos la gracia de salir al encuentro de quien nos necesita."},
+  {t:"El Nacimiento de Jesús en Belén", ref:"Lc 2, 1-20", fruto:"Pobreza de espíritu", med:"Dios nace pobre, en un pesebre. Pidamos sencillez para recibirlo en lo pequeño."},
+  {t:"La Presentación de Jesús en el Templo", ref:"Lc 2, 22-38", fruto:"Obediencia", med:"María y José cumplen la Ley y ofrecen al Niño. Simeón lo reconoce como luz de las naciones."},
+  {t:"El Niño Jesús perdido y hallado en el Templo", ref:"Lc 2, 41-52", fruto:"Buscar a Dios en todo", med:"María y José buscan a Jesús con angustia y lo encuentran en la casa del Padre. Pidamos no dejar nunca de buscarlo."}]},
+ luminosos:{nombre:"Misterios Luminosos", dias:"jueves", lista:[
+  {t:"El Bautismo de Jesús en el Jordán", ref:"Mt 3, 13-17", fruto:"Fidelidad a nuestro bautismo", med:"El Padre dice: \"Este es mi Hijo amado\". Recordemos que en el bautismo también fuimos llamados hijos."},
+  {t:"Las Bodas de Caná", ref:"Jn 2, 1-12", fruto:"Confianza en la intercesión de María", med:"María nota la necesidad y nos dice: \"Hagan todo lo que Él les diga\"."},
+  {t:"El anuncio del Reino de Dios e invitación a la conversión", ref:"Mc 1, 14-15", fruto:"Conversión del corazón", med:"\"El Reino de Dios está cerca: conviértanse y crean en la Buena Noticia\"."},
+  {t:"La Transfiguración del Señor", ref:"Mt 17, 1-8", fruto:"Deseo de santidad", med:"En el monte, Jesús muestra su gloria. El Padre nos pide: \"Escúchenlo\"."},
+  {t:"La institución de la Eucaristía", ref:"Mt 26, 26-28", fruto:"Amor a la Eucaristía", med:"Jesús se entrega como pan partido y vino derramado. Pidamos vivir cada Misa como un encuentro."}]},
+ dolorosos:{nombre:"Misterios Dolorosos", dias:"martes y viernes", lista:[
+  {t:"La oración de Jesús en el Huerto de los Olivos", ref:"Mt 26, 36-46", fruto:"Aceptar la voluntad de Dios", med:"Jesús siente angustia y reza: \"Que no se haga mi voluntad, sino la tuya\"."},
+  {t:"La flagelación del Señor", ref:"Mc 15, 15", fruto:"Pureza y dominio de sí", med:"Jesús soporta el dolor en silencio. Ofrezcamos por quienes sufren violencia."},
+  {t:"La coronación de espinas", ref:"Mt 27, 27-31", fruto:"Paciencia ante las humillaciones", med:"Se burlan del verdadero Rey. Pidamos humildad cuando nos sentimos heridos en el orgullo."},
+  {t:"Jesús con la cruz a cuestas camino del Calvario", ref:"Lc 23, 26-32", fruto:"Paciencia en las pruebas", med:"Simón de Cirene lo ayuda a cargar la cruz. Pidamos ser cireneos para los demás."},
+  {t:"La crucifixión y muerte de Jesús", ref:"Lc 23, 33-46", fruto:"Perdón y amor a Dios", med:"Jesús perdona desde la cruz y entrega su espíritu al Padre. Al pie de la cruz, María nos recibe como hijos."}]},
+ gloriosos:{nombre:"Misterios Gloriosos", dias:"miércoles y domingo", lista:[
+  {t:"La Resurrección del Señor", ref:"Mt 28, 1-10", fruto:"Fe", med:"\"No está aquí: ha resucitado\". La muerte no tiene la última palabra."},
+  {t:"La Ascensión del Señor al cielo", ref:"Hch 1, 6-11", fruto:"Esperanza", med:"Jesús vuelve al Padre y nos envía a ser sus testigos. Nuestro destino es el cielo."},
+  {t:"La venida del Espíritu Santo sobre María y los Apóstoles", ref:"Hch 2, 1-4", fruto:"Docilidad al Espíritu Santo", med:"El Espíritu llega como viento y fuego. Pidamos que encienda nuestro corazón."},
+  {t:"La Asunción de María al cielo", ref:"Ap 12, 1", fruto:"Devoción a María", med:"María es llevada al cielo en cuerpo y alma. Ella nos precede y nos espera."},
+  {t:"La coronación de María como Reina del cielo y de la tierra", ref:"Ap 12, 1", fruto:"Perseverancia final", med:"María es Reina y Madre. Pidamos su ayuda para perseverar en el camino de la fe."}]}
+};
+const ORACIONES = {
+ cruz:{t:"Señal de la cruz", x:"Por la señal de la santa cruz, de nuestros enemigos líbranos, Señor, Dios nuestro. En el nombre del Padre, y del Hijo, y del Espíritu Santo. Amén."},
+ credo:{t:"Credo de los Apóstoles", x:"Creo en Dios, Padre todopoderoso, Creador del cielo y de la tierra. Creo en Jesucristo, su único Hijo, nuestro Señor, que fue concebido por obra y gracia del Espíritu Santo, nació de Santa María Virgen, padeció bajo el poder de Poncio Pilato, fue crucificado, muerto y sepultado, descendió a los infiernos, al tercer día resucitó de entre los muertos, subió a los cielos y está sentado a la derecha de Dios, Padre todopoderoso. Desde allí ha de venir a juzgar a vivos y muertos. Creo en el Espíritu Santo, la santa Iglesia católica, la comunión de los santos, el perdón de los pecados, la resurrección de la carne y la vida eterna. Amén."},
+ pn:{t:"Padre Nuestro", x:"Padre nuestro, que estás en el cielo, santificado sea tu Nombre; venga a nosotros tu Reino; hágase tu voluntad en la tierra como en el cielo. Danos hoy nuestro pan de cada día; perdona nuestras ofensas, como también nosotros perdonamos a los que nos ofenden; no nos dejes caer en la tentación, y líbranos del mal. Amén."},
+ am:{t:"Ave María", x:"Dios te salve, María, llena eres de gracia, el Señor es contigo. Bendita tú eres entre todas las mujeres, y bendito es el fruto de tu vientre, Jesús. Santa María, Madre de Dios, ruega por nosotros, pecadores, ahora y en la hora de nuestra muerte. Amén."},
+ gloria:{t:"Gloria", x:"Gloria al Padre, y al Hijo, y al Espíritu Santo. Como era en el principio, ahora y siempre, por los siglos de los siglos. Amén."},
+ fatima:{t:"Oh Jesús mío", x:"Oh Jesús mío, perdona nuestros pecados, líbranos del fuego del infierno, lleva al cielo a todas las almas y socorre especialmente a las más necesitadas de tu misericordia."},
+ salve:{t:"Salve", x:"Dios te salve, Reina y Madre de misericordia, vida, dulzura y esperanza nuestra; Dios te salve. A ti llamamos los desterrados hijos de Eva; a ti suspiramos, gimiendo y llorando en este valle de lágrimas. Ea, pues, Señora, abogada nuestra, vuelve a nosotros esos tus ojos misericordiosos; y después de este destierro muéstranos a Jesús, fruto bendito de tu vientre. ¡Oh clementísima, oh piadosa, oh dulce Virgen María! Ruega por nosotros, santa Madre de Dios, para que seamos dignos de alcanzar las promesas de nuestro Señor Jesucristo. Amén."}
+};
+
+/* Assemble the plan: 24/09 → 31/12 */
+const BASE=BASE_PLAN.slice();
+[BASE[2],BASE[13]]=[BASE[13],BASE[2]];
+BASE[13]=Object.assign({},BASE[13],{fiesta:"Nuestra Señora del Rosario"});
+const MAG=Object.assign({},BASE.pop(),{fiesta:"Último día del año · Te Deum",
+  reflexion:"Terminamos el año y este plan de lectura con el canto de María. Mirá hacia atrás: cada día que abriste la Palabra, Dios estuvo haciendo grandes cosas en lo pequeño.",
+  preguntas:["¿Qué grandezas hizo Dios en mí este año?","¿Por qué tres personas quiero dar gracias hoy?","¿Qué le pido a Dios para el año que empieza?"]});
+const PLAN=[...BASE,...PLAN_OCT_NOV,...PLAN_DIC,MAG];
+
+const SECS=["palabra","contexto","ensenanza","reflexion","preguntas"];
+const START="2026-09-24", END="2026-12-31", TOTAL=PLAN.length;
+const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const DIAS=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+const $=id=>document.getElementById(id);
+function key(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function parse(k){const [y,m,d]=k.split("-").map(Number);return new Date(y,m-1,d,12)}
+function addDays(k,n){const d=parse(k);d.setDate(d.getDate()+n);return key(d)}
+function diff(a,b){return Math.round((parse(a)-parse(b))/864e5)}
+const TODAY=key(new Date());
+function idxFor(k){return Math.min(TOTAL-1,Math.max(0,diff(k,START)))}
+function clampDay(k){return k<START?START:k>END?END:k}
+
+/* Liturgical season */
+function easter(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;return new Date(y,mo-1,da,12)}
+function plus(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
+function season(k){
+  const d=parse(k),y=d.getFullYear(),E=easter(y);
+  const dec24=new Date(y,11,24,12),adv4=plus(dec24,-dec24.getDay()),adv1=plus(adv4,-21);
+  const jan6=new Date(y,0,6,12),bapt=plus(jan6,7-jan6.getDay());
+  if(d>=new Date(y,11,25,12)||d<=bapt)return{n:"Tiempo de Navidad",c:"#F4F1E6",id:"navidad"};
+  if(d>=adv1)return{n:"Tiempo de Adviento",c:"#6A3D8F",id:"adviento"};
+  const ash=plus(E,-46),palm=plus(E,-7),pent=plus(E,49);
+  if(d>=palm&&d<E)return{n:"Semana Santa",c:"#B3262E",id:"cuaresma"};
+  if(d>=ash&&d<palm)return{n:"Tiempo de Cuaresma",c:"#6A3D8F",id:"cuaresma"};
+  if(+d===+pent)return{n:"Pentecostés",c:"#B3262E",id:"pascua"};
+  if(d>=E&&d<pent)return{n:"Tiempo Pascual",c:"#F4F1E6",id:"pascua"};
+  return{n:"Tiempo Ordinario",c:"#3E8A4F",id:"ordinario"};
+}
+
+/* Storage */
+let journal={entries:{}}, docRef=null;
+function lsGet(){try{return JSON.parse(localStorage.getItem("lampara-journal")||"null")}catch(e){return null}}
+function lsSet(){try{localStorage.setItem("lampara-journal",JSON.stringify(journal))}catch(e){}}
+let writing=Promise.resolve(), pending=false;
+function persist(){
+  lsSet();
+  if(!docRef)return;
+  if(pending)return; pending=true;
+  writing=writing.then(async()=>{pending=false;const body=JSON.parse(JSON.stringify(journal));
+    try{await docRef.set(body)}catch(e){setSaved(e&&e.code==="quota_exceeded"?"No se pudo guardar: el espacio está lleno.":"No se pudo guardar en la nube; quedó guardado en este navegador.")}
+  });
+}
+let saveTimer=null;
+function setSaved(t){$("saved").textContent=t}
+function entry(k,create){let e=journal.entries[k];if(!e&&create){e=journal.entries[k]={read:{},amen:false,text:""}}if(e&&!e.read)e.read={};return e}
+
+/* Tabs */
+let tab=(location.hash==="#rosario")?"rosario":"palabra";
+function setTab(t){tab=t;
+  $("tab-palabra").setAttribute("aria-selected",t==="palabra");$("tab-rosario").setAttribute("aria-selected",t==="rosario");
+  $("panel-palabra").hidden=t!=="palabra";$("panel-rosario").hidden=t!=="rosario";
+  if(t==="rosario")renderRosary();}
+$("tab-palabra").onclick=()=>setTab("palabra");
+$("tab-rosario").onclick=()=>setTab("rosario");
+
+/* Word of the day */
+let view=clampDay(TODAY);
+const isFuture=k=>k>TODAY;
+function render(){
+  const p=PLAN[idxFor(view)], d=parse(view);
+  $("fecha").textContent=DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)+" "+d.getDate()+" de "+MESES[d.getMonth()]+" de "+d.getFullYear();
+  const s=season(view); $("season").innerHTML=""; const dot=document.createElement("i"); dot.style.background=s.c; $("season").append(dot,document.createTextNode(s.n));
+  $("diaN").textContent="Día "+(idxFor(view)+1)+" de "+TOTAL;
+  $("fiesta").hidden=!p.fiesta; $("fiesta").textContent=p.fiesta||"";
+  $("ref").textContent=p.ref; $("book").textContent=p.libro; $("verse").textContent=p.texto;
+  $("contexto").textContent=p.contexto; $("ensenanza").textContent=p.ensenanza; $("reflexion").textContent=p.reflexion;
+  $("frase").textContent=p.frase;
+  const ul=$("preguntas"); ul.innerHTML=""; p.preguntas.forEach(q=>{const li=document.createElement("li");li.textContent=q;ul.append(li)});
+  const e=entry(view,false)||{read:{},amen:false,text:""};
+  if(document.activeElement!==$("nota")) $("nota").value=e.text||"";
+  const future=isFuture(view);
+  document.querySelectorAll("[data-read]").forEach(b=>{b.setAttribute("aria-pressed",e.read[b.dataset.read]?"true":"false");b.disabled=future});
+  $("amen").setAttribute("aria-pressed",e.amen?"true":"false");
+  $("amen").textContent=e.amen?"Amén ✓":"Amén";
+  $("amen").disabled=future; $("nota").disabled=future;
+  $("amenHint").textContent=future?"Este día todavía no llegó. Podés leerlo, y el Amén se habilita ese día.":e.amen?"Oración completada. Que la Palabra te acompañe durante el día.":"Cuando termines de leer y rezar, cerrá tu oración con un Amén.";
+  $("prev").disabled=view<=START;
+  $("next").disabled=view>=END||diff(view,TODAY)>=7;
+  $("chkPalabra").textContent=e.amen?"AMÉN":"";
+  const r=e.rosario; $("chkRosario").textContent=r&&r.done?"REZADO":"";
+  renderSide();
+  if(tab==="rosario")renderRosary();
+}
+function readCount(e){return e&&e.read?SECS.filter(s=>e.read[s]).length:0}
+
+function renderSide(){
+  const e=entry(view,false), n=readCount(e), done=e&&e.amen;
+  const C=213.6; $("ringFg").setAttribute("stroke-dashoffset",String(C-C*(done?1:n/5)));
+  $("ringTxt").textContent=done?"✓":n+"/5"; $("ring").classList.toggle("done",!!done);
+  $("todayState").textContent=done?"Amén":n===0?"Sin empezar":n===5?"Leído, falta el Amén":"En lectura";
+  const r=e&&e.rosario; $("todayRos").textContent=r&&r.done?"Rosario: rezado":r&&r.step>0?"Rosario: "+Math.round(r.step/STEPS.length*100)+"% rezado":"Rosario: sin empezar";
+  const amenOn=k=>journal.entries[k]&&journal.entries[k].amen;
+  let k=amenOn(TODAY)?TODAY:addDays(TODAY,-1), st=0; while(amenOn(k)){st++;k=addDays(k,-1)}
+  $("racha").textContent=st+(st===1?" día":" días");
+  const keys=Object.keys(journal.entries);
+  $("total").textContent=keys.filter(amenOn).length;
+  $("rosTotal").textContent=keys.filter(x=>journal.entries[x].rosario&&journal.entries[x].rosario.done).length;
+  const planDone=keys.filter(x=>x>=START&&x<=END&&amenOn(x)).length;
+  $("caminoBar").style.width=(planDone/TOTAL*100)+"%";
+  $("caminoTxt").textContent=planDone+" de "+TOTAL+" días completados";
+  // 14 days
+  const wk=$("week"); wk.innerHTML="";
+  for(let i=13;i>=0;i--){const kk=addDays(TODAY,-i),ee=journal.entries[kk],c=document.createElement("div");
+    c.className="dayc"+(ee&&ee.amen?" amen":readCount(ee)>0||(ee&&ee.text)?" part":"")+(kk===TODAY?" today":"");
+    c.textContent=parse(kk).getDate();c.title=kk;
+    if(ee&&ee.rosario&&ee.rosario.done){const s=document.createElement("span");s.className="rs";c.append(s)}
+    wk.append(c)}
+  renderCalendar();
+  // journal
+  const jl=$("jlist"); jl.innerHTML="";
+  const withText=keys.filter(x=>(journal.entries[x].text||"").trim()).sort().reverse();
+  if(!withText.length){const li=document.createElement("li");li.innerHTML='<p class="empty">Todavía no escribiste reflexiones. Lo que anotes en «Mi oración de hoy» va a aparecer acá.</p>';jl.append(li)}
+  withText.forEach(x=>{const li=document.createElement("li"),b=document.createElement("button"),dd=parse(x);
+    const t1=document.createElement("div");t1.className="jd";t1.textContent=dd.getDate()+" de "+MESES[dd.getMonth()]+" · "+PLAN[idxFor(x)].ref;
+    const t2=document.createElement("div");t2.className="jt";t2.textContent=journal.entries[x].text;
+    b.append(t1,t2);b.onclick=()=>{view=clampDay(x);setTab("palabra");render();window.scrollTo({top:0,behavior:"smooth"})};li.append(b);jl.append(li)});
+}
+function renderCalendar(){
+  const box=$("camino"); box.innerHTML="";
+  [[2026,8],[2026,9],[2026,10],[2026,11]].forEach(([y,m])=>{
+    const first=new Date(y,m,1,12), last=new Date(y,m+1,0,12);
+    const days=[];for(let d=1;d<=last.getDate();d++){const k=key(new Date(y,m,d,12));if(k>=START&&k<=END)days.push(k)}
+    const doneN=days.filter(k=>journal.entries[k]&&journal.entries[k].amen).length;
+    const wrap=document.createElement("div");wrap.className="month";
+    const mn=document.createElement("div");mn.className="mn";mn.textContent=MESES[m][0].toUpperCase()+MESES[m].slice(1);
+    const cnt=document.createElement("span");cnt.textContent=doneN+"/"+days.length;mn.append(cnt);wrap.append(mn);
+    const cal=document.createElement("div");cal.className="cal";
+    ["L","M","M","J","V","S","D"].forEach(w=>{const c=document.createElement("div");c.className="wd";c.textContent=w;cal.append(c)});
+    const startDay=parse(days[0]); const offset=(startDay.getDay()+6)%7;
+    for(let i=0;i<offset;i++)cal.append(document.createElement("div"));
+    days.forEach(k=>{const p=PLAN[idxFor(k)],b=document.createElement("button"),ee=journal.entries[k];
+      b.className="cstep"+(ee&&ee.amen?" done":"")+(k===view?" cur":"")+(p.fiesta?" fest":"")+(isFuture(k)?" future":"");
+      b.textContent=parse(k).getDate();b.title=p.ref+(p.fiesta?" · "+p.fiesta:"");
+      b.setAttribute("aria-label",parse(k).getDate()+" de "+MESES[m]+": "+p.ref+(p.fiesta?", "+p.fiesta:""));
+      b.onclick=()=>{view=k;render();window.scrollTo({top:0,behavior:"smooth"})};cal.append(b)});
+    wrap.append(cal);box.append(wrap);
+  });
+}
+
+/* Rosary */
+const ORD=["Primer","Segundo","Tercer","Cuarto","Quinto"];
+const STEPS=(()=>{const s=[];
+  s.push({k:"cruz",row:"intro"});s.push({k:"credo",row:"intro"});s.push({k:"pn",row:"intro"});
+  ["fe","esperanza","caridad"].forEach((v,i)=>s.push({k:"am",row:"intro",n:i+1,tot:3,virtud:v}));
+  s.push({k:"gloria",row:"intro"});
+  for(let d=0;d<5;d++){s.push({k:"mist",row:d,d});s.push({k:"pn",row:d,d});for(let i=1;i<=10;i++)s.push({k:"am",row:d,d,n:i,tot:10});s.push({k:"gloria",row:d,d});s.push({k:"fatima",row:d,d})}
+  s.push({k:"salve",row:"fin"});s.push({k:"cruzfin",row:"fin"});return s})();
+function defaultSet(k){const d=parse(k).getDay(),s=season(k).id;
+  if(d===0&&(s==="adviento"||s==="navidad"))return"gozosos";
+  if(d===0&&s==="cuaresma")return"dolorosos";
+  return["gloriosos","gozosos","dolorosos","gloriosos","luminosos","dolorosos","gozosos"][d]}
+const ephem={};
+function rosState(){const r=isFuture(view)?ephem[view]:(entry(view,false)||{}).rosario;return{set:(r&&r.set)||defaultSet(view),step:(r&&r.step)||0,done:!!(r&&r.done)}}
+function saveRos(patch){const next=Object.assign(rosState(),patch);if(isFuture(view)){ephem[view]=next;return}const e=entry(view,true);e.rosario=next;persist();}
+function renderRosary(){
+  const st=rosState(), M=MISTERIOS[st.set], future=isFuture(view);
+  const d=parse(view);
+  const dn=DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1);
+  $("rosDia").textContent=dn+" · "+(st.set===defaultSet(view)?"misterios del día":"elegidos por vos (se rezan "+M.dias+")");
+  $("rosTitulo").textContent=M.nombre;
+  const sets=$("sets"); sets.innerHTML="";
+  Object.keys(MISTERIOS).forEach(id=>{const b=document.createElement("button");b.className="setbtn";b.textContent=MISTERIOS[id].nombre.replace("Misterios ","");
+    b.setAttribute("aria-pressed",id===st.set);b.onclick=()=>{saveRos({set:id});render()};sets.append(b)});
+  const step=Math.min(st.step,STEPS.length-1), cur=STEPS[step];
+  const pct=st.done?100:Math.round(step/STEPS.length*100);
+  $("rosPaso").textContent=st.done?"Rosario completo":"Paso "+(step+1)+" de "+STEPS.length;
+  $("rosPct").textContent=pct+"%"; $("rosBar").style.width=pct+"%";
+  // beads
+  const bx=$("beads"); bx.innerHTML="";
+  const rows=[["intro","Inicio"],["0","1º misterio"],["1","2º misterio"],["2","3º misterio"],["3","4º misterio"],["4","5º misterio"],["fin","Final"]];
+  rows.forEach(([rk,rl])=>{const row=document.createElement("div");row.className="brow";
+    const l=document.createElement("span");l.className="rl";l.textContent=rl;row.append(l);
+    STEPS.forEach((s,i)=>{if(String(s.row)!==rk)return;const b=document.createElement("button");
+      const cls={cruz:"cr",cruzfin:"cr",credo:"cr",pn:"pn",am:"",gloria:"gl",fatima:"fa",mist:"mi",salve:"sv"}[s.k];
+      b.className="bead "+cls+((st.done||i<step)?" done":"")+(!st.done&&i===step?" now":"");
+      if(s.k==="cruz"||s.k==="cruzfin")b.textContent="✠"; if(s.k==="credo")b.textContent="☩"; if(s.k==="mist")b.textContent="✦";
+      b.setAttribute("aria-label",stepTitle(s,M));b.title=stepTitle(s,M);
+      b.onclick=()=>{goStep(i)};row.append(b)});
+    bx.append(row)});
+  // prayer card
+  const showStep=st.done?STEPS.length-1:step, s=STEPS[showStep];
+  const lab=s.row==="intro"?"Oraciones iniciales":s.row==="fin"?"Oraciones finales":ORD[s.d]+" misterio · "+M.lista[s.d].t;
+  $("pLabel").textContent=lab;
+  $("pTitle").textContent=stepTitle(s,M);
+  $("pText").textContent=stepText(s,M);
+  $("pMist").hidden=s.k!=="mist";
+  if(s.k==="mist"){const m=M.lista[s.d];$("mRef").textContent=m.ref;$("mMed").textContent=m.med;$("mFruto").textContent=m.fruto}
+  $("rPrev").disabled=st.done||step===0;
+  const nb=$("rNext");
+  nb.className="next"+(st.done?" ok":step===STEPS.length-1?" fin":"");
+  nb.textContent=st.done?"Rosario rezado ✓":step===STEPS.length-1?"Amén":"Siguiente ›";
+  nb.disabled=st.done;
+  $("rosHint").textContent=future?"Podés rezarlo, pero el avance se guarda solo en días que ya llegaron.":st.done?"Que la Virgen te acompañe hoy.":"";
+  $("rReset").hidden=!(st.done||step>0);
+}
+function stepTitle(s,M){
+  switch(s.k){
+    case"cruz":return"Señal de la cruz";case"cruzfin":return"En el nombre del Padre";
+    case"credo":return ORACIONES.credo.t;case"pn":return ORACIONES.pn.t;case"gloria":return ORACIONES.gloria.t;
+    case"fatima":return ORACIONES.fatima.t;case"salve":return ORACIONES.salve.t;
+    case"am":return"Ave María "+s.n+" de "+s.tot+(s.virtud?" · por la "+s.virtud:"");
+    case"mist":return ORD[s.d]+" misterio: "+M.lista[s.d].t;
+  }}
+function stepText(s,M){
+  switch(s.k){
+    case"cruz":return ORACIONES.cruz.x;case"cruzfin":return"En el nombre del Padre, y del Hijo, y del Espíritu Santo. Amén.";
+    case"credo":return ORACIONES.credo.x;case"pn":return ORACIONES.pn.x;case"am":return ORACIONES.am.x;
+    case"gloria":return ORACIONES.gloria.x;case"fatima":return ORACIONES.fatima.x;case"salve":return ORACIONES.salve.x;
+    case"mist":return"Contemplamos "+M.lista[s.d].t.charAt(0).toLowerCase()+M.lista[s.d].t.slice(1)+".";
+  }}
+function goStep(i){saveRos({step:i,done:false});render()}
+$("rNext").onclick=()=>{
+  const st=rosState();
+  if(st.step>=STEPS.length-1){saveRos({done:true,step:STEPS.length-1});render();const b=$("rNext");b.classList.remove("glow");void b.offsetWidth;b.classList.add("glow");return}
+  goStep(st.step+1);
+};
+$("rPrev").onclick=()=>{const st=rosState();if(st.step>0)goStep(st.step-1)};
+$("rReset").onclick=()=>{saveRos({step:0,done:false});render()};
+
+/* Events */
+document.querySelectorAll("[data-read]").forEach(b=>b.addEventListener("click",()=>{
+  const e=entry(view,true); e.read[b.dataset.read]=!e.read[b.dataset.read]; persist(); render();
+}));
+$("nota").addEventListener("input",()=>{const e=entry(view,true);e.text=$("nota").value;setSaved("Escribiendo…");lsSet();clearTimeout(saveTimer);saveTimer=setTimeout(()=>{persist();setSaved("Guardado");renderSide()},1200)});
+$("amen").addEventListener("click",()=>{
+  const e=entry(view,true);
+  if(e.amen){e.amen=false}else{e.amen=true;SECS.forEach(s=>e.read[s]=true);e.amenAt=new Date().toISOString();
+    const a=$("amen");a.classList.remove("glow");void a.offsetWidth;a.classList.add("glow")}
+  persist(); render();
+});
+$("prev").onclick=()=>{view=clampDay(addDays(view,-1));render()};
+$("next").onclick=()=>{view=clampDay(addDays(view,1));render()};
+$("hoy").onclick=()=>{view=clampDay(TODAY);render()};
+$("copyFrase").addEventListener("click",()=>{const t="«"+$("frase").textContent+"» · "+$("ref").textContent;
+  const ok=()=>{$("copyFrase").textContent="¡Copiada!";setTimeout(()=>$("copyFrase").textContent="Copiar frase",1600)};
+  try{navigator.clipboard.writeText(t).then(ok,()=>selectText($("frase")))}catch(e){selectText($("frase"))}});
+function selectText(el){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r)}
+
+/* Boot */
+const saved=lsGet(); if(saved&&saved.entries)journal=saved;
+setTab(tab); render();
+(async()=>{
+  try{
+    if(!window.claude||!window.claude.use)return;
+    const [dbNs,userNs]=await Promise.all([window.claude.use("db"),window.claude.use("user")]);
+    if(!dbNs||!userNs)return;
+    const uid=await userNs.id(); if(!uid)return;
+    docRef=dbNs.doc("data/users/"+uid+"/journal");
+    const snap=await docRef.get();
+    if(snap.exists){const remote=snap.data()||{};journal={entries:Object.assign({},journal.entries,remote.entries||{})};lsSet();render()}
+    else if(Object.keys(journal.entries).length){persist()}
+    $("storeNote").textContent="Tu diario es privado: solo vos lo ves, en cualquier dispositivo.";
+  }catch(e){}
+})();
+</script>
+
+</body>
+</html>
